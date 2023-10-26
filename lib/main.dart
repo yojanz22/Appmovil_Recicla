@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'mapa.dart'; // Asegúrate de que la ruta sea correcta
+import 'splash_screen.dart'; // Importa la pantalla de inicio
 
 void main() {
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(MaterialApp(home: SplashScreen())); // Muestra la pantalla de inicio
 }
 
 class MyApp extends StatelessWidget {
