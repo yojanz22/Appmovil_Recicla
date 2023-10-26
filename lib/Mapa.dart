@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
   final Set<Marker> _markers = {};
   late Position _currentPosition;
+  TextEditingController _addressController = TextEditingController();
 
   @override
   void initState() {
@@ -28,7 +30,6 @@ class _MapScreenState extends State<MapScreen> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Si los servicios de ubicación no están habilitados, muestra un mensaje.
       showDialog(
         context: context,
         builder: (context) {
@@ -54,7 +55,6 @@ class _MapScreenState extends State<MapScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Si se deniegan los permisos, muestra un mensaje.
         showDialog(
           context: context,
           builder: (context) {
@@ -100,6 +100,42 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  Future<void> _searchLocation() async {
+    List<Location> locations =
+        await locationFromAddress(_addressController.text);
+    if (locations.isNotEmpty) {
+      Location location = locations[0];
+      if (mapController != null) {
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(location.latitude, location.longitude),
+              zoom: 14.0,
+            ),
+          ),
+        );
+      }
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Dirección no encontrada'),
+            content: Text('No se pudo encontrar la dirección ingresada.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,17 +143,31 @@ class _MapScreenState extends State<MapScreen> {
         title: Text('Map Sample App'),
         backgroundColor: Colors.green[700],
       ),
-      body: GoogleMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(
-            _currentPosition?.latitude ?? 0.0,
-            _currentPosition?.longitude ?? 0.0,
+      body: Column(
+        children: <Widget>[
+          TextField(
+            controller: _addressController,
+            decoration: InputDecoration(labelText: 'Buscar dirección'),
           ),
-          zoom: 14.0,
-        ),
-        markers: _markers,
-        myLocationEnabled: true,
+          ElevatedButton(
+            onPressed: _searchLocation,
+            child: Text('Buscar'),
+          ),
+          Expanded(
+            child: GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  _currentPosition?.latitude ?? 0.0,
+                  _currentPosition?.longitude ?? 0.0,
+                ),
+                zoom: 14.0,
+              ),
+              markers: _markers,
+              myLocationEnabled: true,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _goToCurrentLocation,
