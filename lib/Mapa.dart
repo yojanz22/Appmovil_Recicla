@@ -169,10 +169,6 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _goToCurrentLocation,
-        child: Icon(Icons.location_on),
-      ),
     );
   }
 }

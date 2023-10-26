@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'mapa.dart'; // Asegúrate de que la ruta sea correcta
 import 'splash_screen.dart'; // Importa la pantalla de inicio
+import 'crear_point.dart'; // Importa la página "crear_point.dart"
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -45,7 +46,19 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: Text('Ir al mapa'),
-            )
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CrearPointPage(), // Navega a la página "crear_point.dart"
+                  ),
+                );
+              },
+              child: Text('Ir a Crear Punto'),
+            ),
           ],
         ),
       ),
