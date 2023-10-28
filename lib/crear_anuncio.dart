@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CrearAnuncioPage extends StatelessWidget {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
   final TextEditingController cantidadController = TextEditingController();
+  final Position location; // Recibe la ubicación desde MapScreen
+
+  CrearAnuncioPage({required this.location});
 
   void _crearAnuncio(BuildContext context) {
     final nombre = nombreController.text;
@@ -17,6 +21,8 @@ class CrearAnuncioPage extends StatelessWidget {
         'nombre': nombre,
         'descripcion': descripcion,
         'cantidad': cantidad,
+        'ubicacion': GeoPoint(location.latitude,
+            location.longitude), // Guarda la ubicación en la base de datos
       }).then((value) {
         nombreController.clear();
         descripcionController.clear();

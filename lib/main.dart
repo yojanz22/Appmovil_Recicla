@@ -66,18 +66,6 @@ class MyHomePage extends StatelessWidget {
               },
               child: Text('Ir a Productos'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CrearAnuncioPage(), // Navega a la página de crear anuncio
-                  ),
-                );
-              },
-              child: Text('Crear Anuncio'),
-            ),
           ],
         ),
       ),

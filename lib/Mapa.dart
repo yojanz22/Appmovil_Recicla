@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'crear_anuncio.dart'; // Importa la página de Crear Anuncio
 
 class MapScreen extends StatefulWidget {
   @override
@@ -36,7 +37,8 @@ class _MapScreenState extends State<MapScreen> {
           return AlertDialog(
             title: Text('Activar Ubicación'),
             content: Text(
-                'Por favor, active los servicios de ubicación para usar esta aplicación.'),
+              'Por favor, active los servicios de ubicación para usar esta aplicación.',
+            ),
             actions: <Widget>[
               TextButton(
                 child: Text('OK'),
@@ -61,7 +63,8 @@ class _MapScreenState extends State<MapScreen> {
             return AlertDialog(
               title: Text('Permiso de Ubicación Denegado'),
               content: Text(
-                  'Debes otorgar permisos de ubicación para usar esta aplicación.'),
+                'Debes otorgar permisos de ubicación para usar esta aplicación.',
+              ),
               actions: <Widget>[
                 TextButton(
                   child: Text('OK'),
@@ -152,6 +155,18 @@ class _MapScreenState extends State<MapScreen> {
           ElevatedButton(
             onPressed: _searchLocation,
             child: Text('Buscar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CrearAnuncioPage(
+                      location: _currentPosition), // Pasa la ubicación
+                ),
+              );
+            },
+            child: Text('Crear Anuncio'),
           ),
           Expanded(
             child: GoogleMap(

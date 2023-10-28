@@ -27,10 +27,17 @@ class ProductosPage extends StatelessWidget {
                   final producto = productos[index];
                   return ListTile(
                     title: Text(producto['nombre'] ?? 'Nombre no disponible'),
-                    subtitle: Text(
-                        producto['descripcion'] ?? 'Descripción no disponible'),
-                    trailing: Text(
-                        'Cantidad: ${producto['cantidad'] ?? 'Cantidad no disponible'}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(producto['descripcion'] ??
+                            'Descripción no disponible'),
+                        Text(
+                            'Cantidad: ${producto['cantidad'] ?? 'Cantidad no disponible'}'),
+                        Text(
+                            'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}'), // Muestra la dirección
+                      ],
+                    ),
                   );
                 },
               );

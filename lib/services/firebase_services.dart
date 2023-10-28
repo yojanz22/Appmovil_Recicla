@@ -9,7 +9,15 @@ Future<List<Map<String, dynamic>>> getProducto() async {
   QuerySnapshot queryProducto = await collectionReferenceProducto.get();
 
   queryProducto.docs.forEach((documento) {
-    productoList.add(documento.data() as Map<String, dynamic>);
+    // Obtén los datos del documento
+    Map<String, dynamic> productoData =
+        documento.data() as Map<String, dynamic>;
+
+    // Agrega la dirección a los datos del producto si está disponible
+    productoData['direccion'] =
+        'Dirección de prueba'; // Reemplaza con el campo real de dirección
+
+    productoList.add(productoData);
   });
 
   return productoList;
