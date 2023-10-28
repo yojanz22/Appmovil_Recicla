@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'mapa.dart'; // Asegúrate de que la ruta sea correcta
 import 'splash_screen.dart'; // Importa la pantalla de inicio
-import 'crear_point.dart'; // Importa la página "crear_point.dart"
 import 'productos.dart'; // Importa la página de productos
+import 'crear_anuncio.dart'; // Importa la página de crear anuncio
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -60,12 +60,11 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        CrearPointPage(), // Navega a la página "crear_point.dart"
+                    builder: (context) => ProductosPage(),
                   ),
                 );
               },
-              child: Text('Ir a Crear Punto'),
+              child: Text('Ir a Productos'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -73,11 +72,11 @@ class MyHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        ProductosPage(), // Navega a la página de productos
+                        CrearAnuncioPage(), // Navega a la página de crear anuncio
                   ),
                 );
               },
-              child: Text('Ir a Productos'),
+              child: Text('Crear Anuncio'),
             ),
           ],
         ),
