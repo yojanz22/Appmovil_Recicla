@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mi App',
-      home: const MyHomePage(title: 'Página de Inicio'),
+      home: MyHomePage(title: 'Página de Inicio'),
       theme: ThemeData(
         primaryColor: Colors.blue, // Color de la barra de navegación
         scaffoldBackgroundColor: Colors.white, // Color de fondo de la pantalla
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   final String title;
 
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue, // Color del botón
                 onPrimary: Colors.white, // Color del texto del botón
@@ -61,10 +61,11 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Ir al Mapa'),
+              icon: Icon(Icons.map), // Icono a la izquierda del texto
+              label: Text('Ir al Mapa'), // Texto del botón
             ),
             SizedBox(height: 16), // Espacio entre los botones
-            ElevatedButton(
+            ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue, // Color del botón
                 onPrimary: Colors.white, // Color del texto del botón
@@ -77,7 +78,8 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Ir a Productos'),
+              icon: Icon(Icons.shopping_cart), // Icono a la izquierda del texto
+              label: Text('Ir a Productos'), // Texto del botón
             ),
           ],
         ),

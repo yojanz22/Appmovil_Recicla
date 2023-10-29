@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MyHomePage(title: 'Flutter Demo Home Page'),
+          builder: (context) => MyHomePage(title: 'Hola usuario que haremos hoy'),
         ),
       );
     });
@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen>
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          MyHomePage(title: 'Flutter Demo Home Page'),
+                          MyHomePage(title: 'Hola usuario que haremos hoy'),
                     ),
                   );
                 },

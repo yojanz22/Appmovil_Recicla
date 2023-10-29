@@ -21,25 +21,31 @@ class CrearAnuncioPage extends StatelessWidget {
         'nombre': nombre,
         'descripcion': descripcion,
         'cantidad': cantidad,
-        'ubicacion': GeoPoint(location.latitude,
-            location.longitude), // Guarda la ubicación en la base de datos
+        'ubicacion': GeoPoint(location.latitude, location.longitude),
       }).then((value) {
         nombreController.clear();
         descripcionController.clear();
         cantidadController.clear();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Anuncio creado con éxito')),
+          SnackBar(
+            content: Text('Anuncio creado con éxito'),
+            backgroundColor: Colors.green,
+          ),
         );
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al crear el anuncio: $error')),
+          SnackBar(
+            content: Text('Error al crear el anuncio: $error'),
+            backgroundColor: Colors.red,
+          ),
         );
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text('Por favor, complete todos los campos correctamente')),
+          content: Text('Por favor, complete todos los campos correctamente'),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -50,34 +56,57 @@ class CrearAnuncioPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Crear Anuncio'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Ingrese nombre de lo que quiere reciclar:'),
-            TextField(
-              controller: nombreController,
-            ),
-            SizedBox(height: 16),
-            Text('Ingrese una descripción:'),
-            TextField(
-              controller: descripcionController,
-            ),
-            SizedBox(height: 16),
-            Text('Ingrese una cantidad:'),
-            TextField(
-              controller: cantidadController,
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                _crearAnuncio(context);
-              },
-              child: Text('Crear Anuncio'),
-            ),
-          ],
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: nombreController,
+                decoration: InputDecoration(
+                  labelText: 'Nombre del producto',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: descripcionController,
+                decoration: InputDecoration(
+                  labelText: 'Descripción',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: cantidadController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Cantidad',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  _crearAnuncio(context);
+                },
+                child: Text('Crear Anuncio',
+                    style: TextStyle(color: Colors.green)),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(0, 128, 0, 0.5), // Color verde transparente
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
