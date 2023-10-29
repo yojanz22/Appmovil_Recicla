@@ -13,9 +13,12 @@ Future<List<Map<String, dynamic>>> getProducto() async {
     Map<String, dynamic> productoData =
         documento.data() as Map<String, dynamic>;
 
-    // Agrega la dirección a los datos del producto si está disponible
-    productoData['direccion'] =
-        'Dirección de prueba'; // Reemplaza con el campo real de dirección
+    // Agrega la dirección real a los datos del producto si está disponible
+    if (productoData.containsKey('direccion')) {
+      productoData['direccion'] = productoData['direccion'];
+    } else {
+      productoData['direccion'] = 'Dirección no disponible';
+    }
 
     productoList.add(productoData);
   });
