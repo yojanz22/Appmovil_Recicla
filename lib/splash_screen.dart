@@ -13,68 +13,69 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  double _positionY = -150.0; // Inicialmente, por encima de la pantalla
-  double _velocity = 0.0;
-  double _gravity = 0.2;
-  int _bounceCount = 0;
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _startFallingAnimation();
+    _controller = AnimationController(
+      duration: Duration(
+          seconds: 5), // Ajusta la duración para una rotación más lenta
+      vsync: this,
+    );
+    _controller.repeat(
+        reverse: true); // Hacer que la animación rote continuamente
+
+    // Después de cierto tiempo, navega a la página principal
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(title: 'Flutter Demo Home Page'),
+        ),
+      );
+    });
   }
 
-  void _startFallingAnimation() {
-    Future.delayed(Duration(milliseconds: 16), () {
-      setState(() {
-        _velocity += _gravity;
-        _positionY += _velocity;
-
-        if (_positionY >= 250.0) {
-          _positionY = 250.0; // Limita la caída al centro de la pantalla
-          _velocity =
-              -_velocity; // Invertir la velocidad para simular un rebote
-          _bounceCount++;
-
-          if (_bounceCount >= 3) {
-            // Después de 3 rebotes, navega a la página principal
-            Future.delayed(Duration(seconds: 1), () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      MyHomePage(title: 'Flutter Demo Home Page'),
-                ),
-              );
-            });
-          }
-        }
-      });
-
-      if (_bounceCount < 3) {
-        _startFallingAnimation();
-      }
-    });
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 16),
-          transform: Matrix4.translationValues(0, _positionY, 0),
-          child: ClipOval(
-            child: GestureDetector(
-              onTap: () {},
-              child: Image.asset(
-                'assets/logo.jpeg',
-                width: 150,
-                height: 150,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.rotate(
+              angle: _controller.value * 6.3, // Rotar de 0 a 360 grados
+              child: GestureDetector(
+                onTap: () {
+                  // Al tocar la pantalla, navega a la página principal
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MyHomePage(title: 'Flutter Demo Home Page'),
+                    ),
+                  );
+                },
+                child: ClipOval(
+                  // Agregamos ClipOval para hacer el logotipo redondo
+                  child: Image.asset(
+                    'assets/logo.jpeg',
+                    width: 150,
+                    height: 150,
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

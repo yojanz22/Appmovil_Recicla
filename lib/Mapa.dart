@@ -148,13 +148,23 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: Column(
         children: <Widget>[
-          TextField(
-            controller: _addressController,
-            decoration: InputDecoration(labelText: 'Buscar dirección'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _addressController,
+              decoration: InputDecoration(
+                labelText: 'Buscar dirección',
+                border: OutlineInputBorder(),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: _searchLocation,
             child: Text('Buscar'),
+          ),
+          ElevatedButton(
+            onPressed: _goToCurrentLocation,
+            child: Text('Ir a mi ubicación actual'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -162,7 +172,8 @@ class _MapScreenState extends State<MapScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CrearAnuncioPage(
-                      location: _currentPosition), // Pasa la ubicación
+                    location: _currentPosition,
+                  ),
                 ),
               );
             },

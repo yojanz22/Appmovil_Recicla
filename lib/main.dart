@@ -23,8 +23,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Material App',
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: 'Mi App',
+      home: const MyHomePage(title: 'Página de Inicio'),
+      theme: ThemeData(
+        primaryColor: Colors.blue, // Color de la barra de navegación
+        scaffoldBackgroundColor: Colors.white, // Color de fondo de la pantalla
+      ),
     );
   }
 }
@@ -45,6 +49,10 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue, // Color del botón
+                onPrimary: Colors.white, // Color del texto del botón
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -53,9 +61,14 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Ir al mapa'),
+              child: Text('Ir al Mapa'),
             ),
+            SizedBox(height: 16), // Espacio entre los botones
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue, // Color del botón
+                onPrimary: Colors.white, // Color del texto del botón
+              ),
               onPressed: () {
                 Navigator.push(
                   context,

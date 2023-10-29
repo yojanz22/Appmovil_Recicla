@@ -12,10 +12,14 @@ class ProductosPage extends StatelessWidget {
         future: getProducto(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
           if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
           }
           if (snapshot.hasData) {
             final productos = snapshot.data as List<Map<String, dynamic>>;
@@ -25,27 +29,39 @@ class ProductosPage extends StatelessWidget {
                 itemCount: productos.length,
                 itemBuilder: (context, index) {
                   final producto = productos[index];
-                  return ListTile(
-                    title: Text(producto['nombre'] ?? 'Nombre no disponible'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(producto['descripcion'] ??
-                            'Descripción no disponible'),
-                        Text(
-                            'Cantidad: ${producto['cantidad'] ?? 'Cantidad no disponible'}'),
-                        Text(
-                            'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}'), // Muestra la dirección
-                      ],
+                  return Card(
+                    elevation: 4, // Sombra del card
+                    margin: EdgeInsets.all(8), // Margen alrededor del card
+                    child: ListTile(
+                      title: Text(producto['nombre'] ?? 'Nombre no disponible'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            producto['descripcion'] ??
+                                'Descripción no disponible',
+                          ),
+                          Text(
+                            'Cantidad: ${producto['cantidad'] ?? 'Cantidad no disponible'}',
+                          ),
+                          Text(
+                            'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}',
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               );
             } else {
-              return Text('No se encontraron productos.');
+              return Center(
+                child: Text('No se encontraron productos.'),
+              );
             }
           }
-          return Text('No se encontraron productos.');
+          return Center(
+            child: Text('No se encontraron productos.'),
+          );
         },
       ),
     );
