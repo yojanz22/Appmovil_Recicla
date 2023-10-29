@@ -89,20 +89,6 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  void _goToCurrentLocation() {
-    if (_currentPosition != null && mapController != null) {
-      mapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target:
-                LatLng(_currentPosition.latitude, _currentPosition.longitude),
-            zoom: 14.0,
-          ),
-        ),
-      );
-    }
-  }
-
   Future<void> _searchLocation() async {
     List<Location> locations =
         await locationFromAddress(_addressController.text);
@@ -150,34 +136,23 @@ class _MapScreenState extends State<MapScreen> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _addressController,
-              decoration: InputDecoration(
-                labelText: 'Buscar dirección',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: _searchLocation,
-            child: Text('Buscar'),
-          ),
-          ElevatedButton(
-            onPressed: _goToCurrentLocation,
-            child: Text('Ir a mi ubicación actual'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CrearAnuncioPage(
-                    location: _currentPosition,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: _addressController,
+                    decoration: InputDecoration(
+                      labelText: 'Buscar dirección',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              );
-            },
-            child: Text('Crear Anuncio'),
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: _searchLocation,
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: GoogleMap(
@@ -191,6 +166,38 @@ class _MapScreenState extends State<MapScreen> {
               ),
               markers: _markers,
               myLocationEnabled: true,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CrearAnuncioPage(
+                      location: _currentPosition,
+                    ),
+                  ),
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add),
+                  Text('Crear Anuncio'),
+                ],
+              ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                  Colors.green,
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
