@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 
 class CrearAnuncioPage extends StatefulWidget {
-  final Position location; // Recibe la ubicación desde MapScreen
+  final Position location;
 
   CrearAnuncioPage({required this.location});
 
@@ -16,11 +16,13 @@ class CrearAnuncioPage extends StatefulWidget {
 class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
-  final TextEditingController cantidadController = TextEditingController();
-  final TextEditingController direccionController =
-      TextEditingController(); // Agregado
-  String direccionDeReferencia = ''; // Agregado
-  bool isLoading = false; // Agregado
+  final TextEditingController direccionController = TextEditingController();
+  String direccionDeReferencia = '';
+  String tipoDeMaterial = 'Plásticos';
+  bool isLoading = false;
+  String tipoDeUnidad = 'KG'; // Valor predeterminado de la unidad
+
+  String valorUnidad = ''; // Almacena el valor de la unidad (peso o cantidad)
 
   void _crearAnuncio(BuildContext context) async {
     setState(() {
@@ -29,29 +31,28 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
 
     final nombre = nombreController.text;
     final descripcion = descripcionController.text;
-    final cantidad = int.tryParse(cantidadController.text) ?? 0;
     final ubicacion =
         GeoPoint(widget.location.latitude, widget.location.longitude);
-    final direccion =
-        await _getAddressFromLocation(widget.location); // Obtener dirección
+    final direccion = await _getAddressFromLocation(widget.location);
 
     if (nombre.isNotEmpty &&
         descripcion.isNotEmpty &&
-        cantidad > 0 &&
-        direccion.isNotEmpty) {
+        direccion.isNotEmpty &&
+        valorUnidad.isNotEmpty) {
       FirebaseFirestore.instance.collection('producto').add({
         'nombre': nombre,
         'descripcion': descripcion,
-        'cantidad': cantidad,
+        'unidad': tipoDeUnidad,
+        'valorUnidad': valorUnidad, // Nuevo campo para el valor de la unidad
         'ubicacion': ubicacion,
-        'direccion': direccion, // Guardar dirección
-        'direccionReferencia':
-            direccionDeReferencia, // Guardar dirección de referencia
+        'direccion': direccion,
+        'direccionReferencia': direccionDeReferencia,
+        'tipoDeMaterial': tipoDeMaterial,
       }).then((value) {
         nombreController.clear();
         descripcionController.clear();
-        cantidadController.clear();
-        direccionController.clear(); // Limpiar el campo de dirección
+        direccionController.clear();
+        valorUnidad = ''; // Restablece el valor de la unidad
         setState(() {
           isLoading = false;
         });
@@ -124,21 +125,74 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                       ),
                     ),
                     SizedBox(height: 16),
+                    DropdownButton<String>(
+                      value: tipoDeMaterial,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          tipoDeMaterial = newValue!;
+                        });
+                      },
+                      items: <String>[
+                        'Plásticos',
+                        'Papeles y cartón',
+                        'Vidrio',
+                        'Lata',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Text('Tipo de Unidad: '),
+                        DropdownButton<String>(
+                          value: tipoDeUnidad,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              tipoDeUnidad = newValue!;
+                              if (tipoDeUnidad == 'Cantidad') {
+                                valorUnidad =
+                                    ''; // Restablece el valor de la unidad
+                              }
+                            });
+                          },
+                          items: <String>[
+                            'KG',
+                            'Cantidad',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    if (tipoDeUnidad == 'KG')
+                      TextField(
+                        decoration:
+                            InputDecoration(labelText: 'Ingresa el peso (KG)'),
+                        onChanged: (value) {
+                          valorUnidad = value;
+                        },
+                      )
+                    else if (tipoDeUnidad == 'Cantidad')
+                      TextField(
+                        decoration:
+                            InputDecoration(labelText: 'Ingresa la cantidad'),
+                        onChanged: (value) {
+                          valorUnidad = value;
+                        },
+                      ),
+                    SizedBox(height: 16),
                     TextField(
                       controller: descripcionController,
                       decoration: InputDecoration(
                         labelText: 'Descripción',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    TextField(
-                      controller: cantidadController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Cantidad',
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.black),
                         ),
@@ -163,8 +217,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                           style: TextStyle(color: Colors.green)),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromRGBO(
-                              0, 128, 0, 0.5), // Color verde transparente
+                          Color.fromRGBO(0, 128, 0, 0.5),
                         ),
                       ),
                     ),
