@@ -20,9 +20,8 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
   String direccionDeReferencia = '';
   String tipoDeMaterial = 'Plásticos';
   bool isLoading = false;
-  String tipoDeUnidad = 'KG'; // Valor predeterminado de la unidad
-
-  String valorUnidad = ''; // Almacena el valor de la unidad (peso o cantidad)
+  String tipoDeUnidad = 'KG';
+  String valorUnidad = '';
 
   void _crearAnuncio(BuildContext context) async {
     setState(() {
@@ -43,7 +42,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         'nombre': nombre,
         'descripcion': descripcion,
         'unidad': tipoDeUnidad,
-        'valorUnidad': valorUnidad, // Nuevo campo para el valor de la unidad
+        'valorUnidad': valorUnidad,
         'ubicacion': ubicacion,
         'direccion': direccion,
         'direccionReferencia': direccionDeReferencia,
@@ -52,7 +51,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         nombreController.clear();
         descripcionController.clear();
         direccionController.clear();
-        valorUnidad = ''; // Restablece el valor de la unidad
+        valorUnidad = '';
         setState(() {
           isLoading = false;
         });
@@ -115,47 +114,51 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextField(
-                      controller: nombreController,
-                      decoration: InputDecoration(
-                        labelText: 'Nombre del producto',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
+                    Text(
+                      'Tipo de Material',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 16),
+                    Container(
+                      height: 100,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _buildMaterialOption('Plásticos'),
+                          _buildMaterialOption('Papeles y Cartón'),
+                          _buildMaterialOption('Vidrio'),
+                          _buildMaterialOption('Lata'),
+                        ],
                       ),
                     ),
                     SizedBox(height: 16),
-                    DropdownButton<String>(
-                      value: tipoDeMaterial,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          tipoDeMaterial = newValue!;
-                        });
-                      },
-                      items: <String>[
-                        'Plásticos',
-                        'Papeles y cartón',
-                        'Vidrio',
-                        'Lata',
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                    Text(
+                      'Nombre del Producto',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    TextField(
+                      controller: nombreController,
+                      decoration: InputDecoration(
+                        hintText: 'Ingrese el nombre del producto',
+                      ),
                     ),
                     SizedBox(height: 16),
+                    Text(
+                      'Tipo de Unidad',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                     Row(
                       children: [
-                        Text('Tipo de Unidad: '),
                         DropdownButton<String>(
                           value: tipoDeUnidad,
                           onChanged: (String? newValue) {
                             setState(() {
                               tipoDeUnidad = newValue!;
                               if (tipoDeUnidad == 'Cantidad') {
-                                valorUnidad =
-                                    ''; // Restablece el valor de la unidad
+                                valorUnidad = '';
                               }
                             });
                           },
@@ -174,38 +177,44 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                     SizedBox(height: 16),
                     if (tipoDeUnidad == 'KG')
                       TextField(
-                        decoration:
-                            InputDecoration(labelText: 'Ingresa el peso (KG)'),
+                        decoration: InputDecoration(
+                          labelText: 'Ingresa el peso (KG)',
+                        ),
                         onChanged: (value) {
                           valorUnidad = value;
                         },
                       )
                     else if (tipoDeUnidad == 'Cantidad')
                       TextField(
-                        decoration:
-                            InputDecoration(labelText: 'Ingresa la cantidad'),
+                        decoration: InputDecoration(
+                          labelText: 'Ingresa la cantidad',
+                        ),
                         onChanged: (value) {
                           valorUnidad = value;
                         },
                       ),
                     SizedBox(height: 16),
+                    Text(
+                      'Descripción',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                     TextField(
                       controller: descripcionController,
                       decoration: InputDecoration(
-                        labelText: 'Descripción',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
+                        hintText: 'Ingrese una descripción',
                       ),
                     ),
                     SizedBox(height: 16),
+                    Text(
+                      'Dirección',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                     TextField(
                       controller: direccionController,
                       decoration: InputDecoration(
-                        labelText: 'Dirección',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                        ),
+                        hintText: 'Ingrese la dirección',
                       ),
                     ),
                     SizedBox(height: 16),
@@ -213,8 +222,10 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                       onPressed: () {
                         _crearAnuncio(context);
                       },
-                      child: Text('Crear Anuncio',
-                          style: TextStyle(color: Colors.green)),
+                      child: Text(
+                        'Crear Anuncio',
+                        style: TextStyle(color: Colors.black),
+                      ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           Color.fromRGBO(0, 128, 0, 0.5),
@@ -225,6 +236,35 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildMaterialOption(String material) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          tipoDeMaterial = material;
+        });
+      },
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: tipoDeMaterial == material ? Colors.blue : Colors.grey,
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Text(
+            material,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: tipoDeMaterial == material
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

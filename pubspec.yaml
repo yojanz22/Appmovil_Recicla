@@ -14,6 +14,7 @@ dependencies:
   
     sdk: flutter
   cupertino_icons: ^1.0.2
+  
 
   #mapa
   google_maps_flutter: ^2.5.0  # Utiliza la versión adecuada
