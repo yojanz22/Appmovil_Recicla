@@ -20,6 +20,14 @@ Future<List<Map<String, dynamic>>> getProducto() async {
       productoData['direccion'] = 'Dirección no disponible';
     }
 
+    // Aquí asumimos que el campo 'imagenURL' contiene la ruta de la imagen en la caché
+    // Puedes ajustar el nombre del campo según lo que hayas usado en Firestore
+    if (productoData.containsKey('imagenURL')) {
+      productoData['imagenURL'] = productoData['imagenURL'];
+    } else {
+      productoData['imagenURL'] = 'Ruta de imagen no disponible';
+    }
+
     productoList.add(productoData);
   });
 

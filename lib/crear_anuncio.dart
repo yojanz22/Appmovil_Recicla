@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class CrearAnuncioPage extends StatefulWidget {
   final Position location;
@@ -22,6 +24,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
   bool isLoading = false;
   String tipoDeUnidad = 'KG';
   String valorUnidad = '';
+  XFile? selectedImage; // Campo para almacenar la imagen seleccionada
 
   void _crearAnuncio(BuildContext context) async {
     setState(() {
@@ -47,6 +50,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         'direccion': direccion,
         'direccionReferencia': direccionDeReferencia,
         'tipoDeMaterial': tipoDeMaterial,
+        'imagenURL': selectedImage?.path, // Agrega la URL de la imagen
       }).then((value) {
         nombreController.clear();
         descripcionController.clear();
@@ -95,6 +99,17 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       return '${address.thoroughfare} ${address.subThoroughfare}, ${address.locality}, ${address.administrativeArea}';
     } else {
       return '';
+    }
+  }
+
+  Future<void> _seleccionarImagen() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        selectedImage = pickedFile;
+      });
     }
   }
 
@@ -232,6 +247,22 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        _seleccionarImagen();
+                      },
+                      child: Text('Seleccionar Imagen'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromRGBO(0, 128, 0, 0.5),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    if (selectedImage != null)
+                      Image.file(File(selectedImage!.path),
+                          height: 100, width: 100),
                   ],
                 ),
               ),
