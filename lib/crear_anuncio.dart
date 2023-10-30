@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'mapa2.dart'; // Asegúrate de importar la página del mapa.
 
 class CrearAnuncioPage extends StatefulWidget {
   final Position location;
@@ -233,6 +234,18 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                       ),
                     ),
                     SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Mapa2Page(location: widget.location),
+                          ),
+                        );
+                      },
+                      child: Text('Ver en el Mapa'),
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         _crearAnuncio(context);
