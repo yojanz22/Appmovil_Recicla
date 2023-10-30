@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io'; // Importa el paquete 'dart:io' para utilizar File
+import 'dart:io';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -11,19 +11,15 @@ Future<List<Map<String, dynamic>>> getProducto() async {
   QuerySnapshot queryProducto = await collectionReferenceProducto.get();
 
   queryProducto.docs.forEach((documento) {
-    // Obtén los datos del documento
     Map<String, dynamic> productoData =
         documento.data() as Map<String, dynamic>;
 
-    // Agrega la dirección real a los datos del producto si está disponible
     if (productoData.containsKey('direccion')) {
       productoData['direccion'] = productoData['direccion'];
     } else {
       productoData['direccion'] = 'Dirección no disponible';
     }
 
-    // Aquí asumimos que el campo 'imagenURL' contiene la ruta de la imagen en la caché
-    // Puedes ajustar el nombre del campo según lo que hayas usado en Firestore
     if (productoData.containsKey('imagenURL')) {
       productoData['imagenURL'] = productoData['imagenURL'];
     } else {
@@ -92,31 +88,47 @@ class _ProductosPageState extends State<ProductosPage> {
                   return Card(
                     elevation: 4,
                     margin: EdgeInsets.all(8),
-                    child: ListTile(
-                      title: Text(producto['nombre'] ?? 'Nombre no disponible'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            producto['descripcion'] ??
-                                'Descripción no disponible',
+                    child: Column(
+                      children: [
+                        if (producto['imagenURL'] != null &&
+                            producto['imagenURL'] !=
+                                'Ruta de imagen no disponible')
+                          Image.file(
+                            File(producto['imagenURL']),
+                            width: double
+                                .infinity, // La imagen ocupa todo el ancho
+                            height: 200, // Altura fija para la imagen
+                            fit: BoxFit.cover, // Ajusta la imagen al contenedor
                           ),
-                          Text(
-                            'Tipo de Unidad: ${producto['unidad'] ?? 'Unidad no disponible'}',
+                        ListTile(
+                          title: Text(
+                            producto['nombre'] ?? 'Nombre no disponible',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold, // Título en negrita
+                              fontSize: 20, // Tamaño de fuente más grande
+                              color: Colors.black, // Texto en negro
+                            ),
                           ),
-                          Text(
-                            'Valor de Unidad: ${producto['valorUnidad'] ?? 'Valor no disponible'}',
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                producto['descripcion'] ??
+                                    'Descripción no disponible',
+                              ),
+                              Text(
+                                'Tipo de Unidad: ${producto['unidad'] ?? 'Unidad no disponible'}',
+                              ),
+                              Text(
+                                'Valor de Unidad: ${producto['valorUnidad'] ?? 'Valor no disponible'}',
+                              ),
+                              Text(
+                                'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}',
+                              ),
+                            ],
                           ),
-                          Text(
-                            'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}',
-                          ),
-                          if (producto['imagenURL'] != null &&
-                              producto['imagenURL'] !=
-                                  'Ruta de imagen no disponible')
-                            Image.file(File(producto['imagenURL']),
-                                width: 100, height: 100),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },
