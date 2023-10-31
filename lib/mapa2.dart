@@ -37,7 +37,7 @@ class _Mapa2PageState extends State<Mapa2Page> {
             markerId: MarkerId(doc.id),
             position: LatLng(ubicacion.latitude, ubicacion.longitude),
             infoWindow: InfoWindow(
-              title: nombre,
+              title: nombre, // Agrega el título del marcador
             ),
           ),
         );
