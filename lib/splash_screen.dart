@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'menuL.dart'; // Importa la página de menú
+import 'services/auth_service.dart'; // Importa la clase de servicio de autenticación
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -28,14 +30,17 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.repeat(
         reverse: true); // Hacer que la animación rote continuamente
 
-    // Después de cierto tiempo, navega a la página de menú
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MenuPage(),
-        ),
-      );
+    // Realizar la verificación de autenticación
+    _authService.checkAuthentication().then((isAuthenticated) {
+      if (isAuthenticated) {
+        // Si el usuario está autenticado, navega a la página de menú
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MenuPage(),
+          ),
+        );
+      }
     });
   }
 
