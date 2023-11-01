@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'menuL.dart'; // Importa la página de menú
+import 'main.dart'; // Importa la página principal
 
 class LoginPage extends StatefulWidget {
   @override
@@ -20,9 +20,10 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
-        // Inicio de sesión exitoso, redirige a la página de menú
+
+        // Inicio de sesión exitoso, redirige a la página principal (MyApp)
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => MenuPage()));
+            context, MaterialPageRoute(builder: (context) => MyApp()));
       } catch (e) {
         // Manejo de errores, como credenciales incorrectas
         ScaffoldMessenger.of(context).showSnackBar(
