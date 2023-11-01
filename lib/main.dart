@@ -6,16 +6,15 @@ import 'productos.dart';
 import 'crear_anuncio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'services/auth_service.dart'; // Importa la clase de servicio de autenticación
+import 'services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Authentication
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(MaterialApp(
-      home:
-          CheckAuth())); // Muestra la pantalla de verificación de autenticación
+  runApp(MaterialApp(home: CheckAuth()));
 }
 
 class CheckAuth extends StatefulWidget {
@@ -29,10 +28,8 @@ class _CheckAuthState extends State<CheckAuth> {
   @override
   void initState() {
     super.initState();
-    // Realiza la verificación de autenticación
     _authService.checkAuthentication().then((isAuthenticated) {
       if (isAuthenticated) {
-        // Si el usuario está autenticado, navega directamente a la página principal (MyApp)
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -40,7 +37,6 @@ class _CheckAuthState extends State<CheckAuth> {
           ),
         );
       } else {
-        // Si el usuario no está autenticado, muestra la pantalla de inicio (SplashScreen)
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -55,8 +51,7 @@ class _CheckAuthState extends State<CheckAuth> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child:
-            CircularProgressIndicator(), // Puedes mostrar un indicador de carga mientras se verifica la autenticación
+        child: CircularProgressIndicator(),
       ),
     );
   }
@@ -88,6 +83,20 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SplashScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
