@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'menuL.dart'; // Importa la página de menú
 
-import 'main.dart';
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(MaterialApp(home: SplashScreen()));
+  runApp(MaterialApp(home: SplashScreen())); // Muestra la pantalla de inicio
 }
 
 class SplashScreen extends StatefulWidget {
@@ -28,13 +28,12 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.repeat(
         reverse: true); // Hacer que la animación rote continuamente
 
-    // Después de cierto tiempo, navega a la página principal
+    // Después de cierto tiempo, navega a la página de menú
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              MyHomePage(title: 'Hola usuario que haremos hoy'),
+          builder: (context) => MenuPage(),
         ),
       );
     });
@@ -57,12 +56,11 @@ class _SplashScreenState extends State<SplashScreen>
               angle: _controller.value * 6.3, // Rotar de 0 a 360 grados
               child: GestureDetector(
                 onTap: () {
-                  // Al tocar la pantalla, navega a la página principal
+                  // Al tocar la pantalla, navega a la página de menú
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          MyHomePage(title: 'Hola usuario que haremos hoy'),
+                      builder: (context) => MenuPage(),
                     ),
                   );
                 },

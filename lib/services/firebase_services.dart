@@ -1,35 +1,63 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-FirebaseFirestore db = FirebaseFirestore.instance;
+class FirebaseService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-Future<List<Map<String, dynamic>>> getProducto() async {
-  List<Map<String, dynamic>> productoList = [];
+  // Otras funciones de Firebase
 
-  CollectionReference collectionReferenceProducto = db.collection('producto');
-  QuerySnapshot queryProducto = await collectionReferenceProducto.get();
-
-  queryProducto.docs.forEach((documento) {
-    // Obtén los datos del documento
-    Map<String, dynamic> productoData =
-        documento.data() as Map<String, dynamic>;
-
-    // Agrega la dirección real a los datos del producto si está disponible
-    if (productoData.containsKey('direccion')) {
-      productoData['direccion'] = productoData['direccion'];
-    } else {
-      productoData['direccion'] = 'Dirección no disponible';
+  // Función para agregar un registro a la colección "registro"
+  Future<void> addRegistro(Map<String, dynamic> registroData) async {
+    try {
+      await _firestore.collection('registro').add(registroData);
+    } catch (e) {
+      print('Error al agregar registro a Firestore: $e');
     }
+  }
 
-    // Aquí asumimos que el campo 'imagenURL' contiene la ruta de la imagen en la caché
-    // Puedes ajustar el nombre del campo según lo que hayas usado en Firestore
-    if (productoData.containsKey('imagenURL')) {
-      productoData['imagenURL'] = productoData['imagenURL'];
-    } else {
-      productoData['imagenURL'] = 'Ruta de imagen no disponible';
+  // Función para obtener una lista de registros de la colección "registro"
+  Future<List<Map<String, dynamic>>?> getRegistros() async {
+    try {
+      final QuerySnapshot querySnapshot =
+          await _firestore.collection('registro').get();
+      return querySnapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+    } catch (e) {
+      print('Error al obtener registros desde Firestore: $e');
+      return null;
     }
+  }
 
-    productoList.add(productoData);
-  });
+  // Función para obtener una lista de productos desde la colección "producto"
+  Future<List<Map<String, dynamic>>?> getProductos() async {
+    try {
+      final QuerySnapshot querySnapshot =
+          await _firestore.collection('producto').get();
+      List<Map<String, dynamic>> productoList = [];
 
-  return productoList;
+      querySnapshot.docs.forEach((documento) {
+        Map<String, dynamic> productoData =
+            documento.data() as Map<String, dynamic>;
+
+        if (productoData.containsKey('direccion')) {
+          productoData['direccion'] = productoData['direccion'];
+        } else {
+          productoData['direccion'] = 'Dirección no disponible';
+        }
+
+        if (productoData.containsKey('imagenURL')) {
+          productoData['imagenURL'] = productoData['imagenURL'];
+        } else {
+          productoData['imagenURL'] = 'Ruta de imagen no disponible';
+        }
+
+        productoList.add(productoData);
+      });
+
+      return productoList;
+    } catch (e) {
+      print('Error al obtener productos desde Firestore: $e');
+      return null;
+    }
+  }
 }
