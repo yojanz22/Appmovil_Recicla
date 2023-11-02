@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'crear_anuncio.dart';
+import 'mapa2.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late Position _currentPosition;
+  bool _locationObtained = false;
 
   @override
   void initState() {
@@ -16,13 +18,14 @@ class _MapScreenState extends State<MapScreen> {
     _getCurrentLocation();
   }
 
-  void _getCurrentLocation() async {
+  Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Manejo de la falta de servicio de ubicación
+      // Si los servicios de ubicación no están habilitados, muestra una alerta al usuario.
+      _showLocationServiceAlert();
       return;
     }
 
@@ -30,7 +33,8 @@ class _MapScreenState extends State<MapScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Manejo de la denegación de permisos de ubicación
+        // Si el usuario deniega los permisos de ubicación, muestra una alerta.
+        _showLocationPermissionAlert();
         return;
       }
     }
@@ -41,7 +45,50 @@ class _MapScreenState extends State<MapScreen> {
 
     setState(() {
       _currentPosition = position;
+      _locationObtained = true;
     });
+  }
+
+  void _showLocationServiceAlert() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Servicio de ubicación deshabilitado'),
+          content: Text(
+              'Por favor, active el servicio de ubicación en la configuración de su dispositivo.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLocationPermissionAlert() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Permisos de ubicación denegados'),
+          content: Text(
+              'Por favor, habilite los permisos de ubicación en la configuración de su dispositivo.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -52,23 +99,38 @@ class _MapScreenState extends State<MapScreen> {
         backgroundColor: Colors.green[700],
       ),
       body: Center(
-        // Aquí se encuentra el botón "Crear Anuncio"
-        child: ElevatedButton(
-          onPressed: () {
-            if (_currentPosition != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CrearAnuncioPage(
-                    location: _currentPosition,
-                  ),
-                ),
-              );
-            } else {
-              // Manejo de la falta de ubicación actual
-            }
-          },
-          child: Text('Crear Anuncio'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                if (_locationObtained) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Mapa2Page(location: _currentPosition),
+                    ),
+                  );
+                }
+              },
+              child: Text('Ir a Mapa 2'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_locationObtained) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CrearAnuncioPage(location: _currentPosition),
+                    ),
+                  );
+                }
+              },
+              child: Text('Crear Anuncio'),
+            ),
+          ],
         ),
       ),
     );
