@@ -99,10 +99,47 @@ class MyHomePage extends StatelessWidget {
           ),
         ],
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('Menú Hamburguesa'),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+            ),
+            ListTile(
+              title: Text('Editar Perfil'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditarPerfilPage(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Desconectarse'),
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SplashScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Los botones "Ver Mapa" y "Explorar Productos" se mantienen en el cuerpo de la pantalla.
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue,
@@ -135,23 +172,6 @@ class MyHomePage extends StatelessWidget {
               },
               icon: Icon(Icons.shopping_cart),
               label: Text('Explorar Productos'),
-            ),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        EditarPerfilPage(), // Utiliza el nombre correcto de tu página de edición de perfil.
-                  ),
-                );
-              },
-              icon: Icon(Icons.person), // Icono para editar perfil
-              label: Text('Editar Perfil'),
             ),
           ],
         ),
