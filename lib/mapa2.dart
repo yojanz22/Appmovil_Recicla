@@ -69,12 +69,12 @@ class _Mapa2PageState extends State<Mapa2Page> {
         final producto =
             querySnapshot.docs.first.data() as Map<String, dynamic>;
 
-        showDialog(
+        showModalBottomSheet(
           context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Información del Producto'),
-              content: Column(
+          builder: (context) {
+            return Container(
+              padding: EdgeInsets.all(16),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Nombre: ${producto['nombre']}'),
@@ -83,16 +83,16 @@ class _Mapa2PageState extends State<Mapa2Page> {
                   Text('Tipo de Unidad: ${producto['unidad']}'),
                   Text('Valor de Unidad: ${producto['valorUnidad']}'),
                   Text('Dirección: ${producto['direccion']}'),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Agrega aquí la lógica para hablar con la persona.
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Hablar con la persona'),
+                  ),
                 ],
               ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cerrar'),
-                ),
-              ],
             );
           },
         );
