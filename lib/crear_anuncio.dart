@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:recicla/mapa2.dart';
+
 class CrearAnuncioPage extends StatefulWidget {
   final Position location;
 
@@ -65,9 +67,9 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
     }
   }
 
-  Future<void> _seleccionarImagen() async {
+  Future<void> _tomarFoto() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile != null) {
       setState(() {
@@ -181,6 +183,35 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                   hintText: 'Ingrese una descripción',
                 ),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  _tomarFoto();
+                },
+                child: Text('Tomar Foto'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(0, 128, 0, 0.5),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Mapa2Page(location: widget.location),
+                    ),
+                  );
+                },
+                child: Text('Ver Mapa'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(0, 128, 0, 0.5),
+                  ),
+                ),
+              ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -194,20 +225,6 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 ),
               ),
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  _seleccionarImagen();
-                },
-                child: Text('Seleccionar Imagen'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(0, 128, 0, 0.5),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              if (selectedImage != null)
-                Image.file(File(selectedImage!.path), height: 100, width: 100),
             ],
           ),
         ),
