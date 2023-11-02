@@ -133,6 +133,60 @@ class _MapScreenState extends State<MapScreen> {
           ],
         ),
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text('Tu Nombre'),
+              accountEmail: Text('tu@email.com'),
+              currentAccountPicture: CircleAvatar(
+                child: Icon(Icons.person),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Página Principal'),
+              onTap: () {
+                Navigator.of(context).pop(); // Cierra el Drawer
+                // Navegar a la página principal
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.map),
+              title: Text('Mapa 2'),
+              onTap: () {
+                Navigator.of(context).pop(); // Cierra el Drawer
+                if (_locationObtained) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          Mapa2Page(location: _currentPosition),
+                    ),
+                  );
+                }
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.add),
+              title: Text('Crear Anuncio'),
+              onTap: () {
+                Navigator.of(context).pop(); // Cierra el Drawer
+                if (_locationObtained) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CrearAnuncioPage(location: _currentPosition),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

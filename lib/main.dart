@@ -103,14 +103,17 @@ class MyHomePage extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              child: Text('Menú Hamburguesa'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
+            UserAccountsDrawerHeader(
+              accountName: Text("Nombre de Usuario"),
+              accountEmail: Text("usuario@email.com"),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: AssetImage(
+                    "assets/profile_image.jpg"), // Agrega una imagen de perfil
               ),
             ),
             ListTile(
               title: Text('Editar Perfil'),
+              leading: Icon(Icons.person),
               onTap: () {
                 Navigator.push(
                   context,
@@ -122,6 +125,7 @@ class MyHomePage extends StatelessWidget {
             ),
             ListTile(
               title: Text('Desconectarse'),
+              leading: Icon(Icons.power_settings_new),
               onTap: () async {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
@@ -139,11 +143,19 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // Los botones "Ver Mapa" y "Explorar Productos" se mantienen en el cuerpo de la pantalla.
-            ElevatedButton.icon(
+            Text(
+              '¡Bienvenido!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue,
                 onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               ),
               onPressed: () {
                 Navigator.push(
@@ -153,14 +165,17 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              icon: Icon(Icons.map),
-              label: Text('Ver Mapa'),
+              child: Text(
+                'Ver Mapa',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
+            SizedBox(height: 20),
+            ElevatedButton(
               style: ElevatedButton.styleFrom(
                 primary: Colors.blue,
                 onPrimary: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               ),
               onPressed: () {
                 Navigator.push(
@@ -170,8 +185,10 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              icon: Icon(Icons.shopping_cart),
-              label: Text('Explorar Productos'),
+              child: Text(
+                'Explorar Productos',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ],
         ),
