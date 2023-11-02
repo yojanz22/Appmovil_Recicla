@@ -15,6 +15,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   image_picker: ^1.0.4
+  camera: ^0.10.5+5
+  permission_handler: ^11.0.1
 
   #mapa
   google_maps_flutter: ^2.5.0  # Utiliza la versión adecuada

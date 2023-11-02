@@ -42,7 +42,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.recicla"
-        minSdkVersion 20 // Agrega esta línea
+        minSdkVersion 21 // Agrega esta línea
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

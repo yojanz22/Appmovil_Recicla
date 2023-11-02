@@ -49,52 +49,48 @@ class _MenuPageState extends State<MenuPage> with TickerProviderStateMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.transparent), // Fondo transparente
-                          side: MaterialStateProperty.all(BorderSide(
-                              color: Colors.green,
-                              width: 2.0)), // Contorno verde
-                        ),
-                        onPressed: () {
-                          // Navega a la página de inicio de sesión
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()),
-                          );
-                        },
-                        child: Text(
-                          'Iniciar Sesión',
-                          style: TextStyle(color: Colors.black), // Texto negro
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.transparent), // Fondo transparente
-                          side: MaterialStateProperty.all(BorderSide(
-                              color: Colors.green,
-                              width: 2.0)), // Contorno verde
-                        ),
-                        onPressed: () {
-                          // Navega a la página de registro
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegisterPage()),
-                          );
-                        },
-                        child: Text(
-                          'Registrarse',
-                          style: TextStyle(color: Colors.black), // Texto negro
-                        ),
-                      ),
-                    ],
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.blue), // Fondo azul
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.all(16.0)), // Espaciado interno
+                    ),
+                    onPressed: () {
+                      // Navega a la página de inicio de sesión
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
+                    child: Text(
+                      'Iniciar Sesión',
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 24), // Texto verde, fuente más grande
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.blue), // Fondo azul
+                      padding: MaterialStateProperty.all(
+                          EdgeInsets.all(16.0)), // Espaciado interno
+                    ),
+                    onPressed: () {
+                      // Navega a la página de registro
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
+                    },
+                    child: Text(
+                      'Registrarse',
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 24), // Texto verde, fuente más grande
+                    ),
                   ),
                 ],
               ),
