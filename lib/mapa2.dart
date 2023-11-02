@@ -19,39 +19,24 @@ class _Mapa2PageState extends State<Mapa2Page> {
   @override
   void initState() {
     super.initState();
-    _loadMarkersFromFirestore();
+    _loadCustomMarkersFromFirestore();
   }
 
-  void _showProductInfo(String nombre, String descripcion, String direccion,
-      String tipoDeMaterial) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(nombre), // Muestra el nombre del producto como título
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Descripción: $descripcion"),
-              Text("Dirección: $direccion"),
-              Text("Tipo de Material: $tipoDeMaterial"),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Cierra el cuadro de diálogo
-              },
-              child: Text('Cerrar'),
-            ),
-          ],
-        );
+  Marker _buildCustomMarker(String nombre, double latitud, double longitud) {
+    return Marker(
+      markerId: MarkerId(nombre),
+      position: LatLng(latitud, longitud),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      infoWindow: InfoWindow(
+        title: nombre,
+      ),
+      onTap: () {
+        _showProductInfo(nombre);
       },
     );
   }
 
-  void _loadMarkersFromFirestore() {
+  void _loadCustomMarkersFromFirestore() {
     FirebaseFirestore.instance
         .collection('producto')
         .get()
@@ -60,26 +45,23 @@ class _Mapa2PageState extends State<Mapa2Page> {
         final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         final GeoPoint ubicacion = data['ubicacion'] as GeoPoint;
         final String nombre = data['nombre'] as String;
-        final String descripcion = data['descripcion'] as String;
-        final String direccion = data['direccion'] as String;
-        final String tipoDeMaterial = data['tipoDeMaterial'] as String;
 
-        _markers.add(Marker(
-          markerId: MarkerId(doc.id),
-          position: LatLng(ubicacion.latitude, ubicacion.longitude),
-          infoWindow: InfoWindow(
-            title: nombre, // Agrega el título del marcador
-          ),
-          onTap: () {
-            _showProductInfo(nombre, descripcion, direccion, tipoDeMaterial);
-          },
-        ));
+        final customMarker = _buildCustomMarker(
+          nombre,
+          ubicacion.latitude,
+          ubicacion.longitude,
+        );
 
         setState(() {
-          _markers = _markers;
+          _markers.add(customMarker);
         });
       });
     });
+  }
+
+  void _showProductInfo(String nombre) {
+    // Implementa la lógica para mostrar información detallada sobre el producto aquí.
+    // Puedes usar un cuadro de diálogo o un widget personalizado.
   }
 
   @override
