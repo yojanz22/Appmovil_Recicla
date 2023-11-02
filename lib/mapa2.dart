@@ -60,8 +60,46 @@ class _Mapa2PageState extends State<Mapa2Page> {
   }
 
   void _showProductInfo(String nombre) {
-    // Implementa la lógica para mostrar información detallada sobre el producto aquí.
-    // Puedes usar un cuadro de diálogo o un widget personalizado.
+    FirebaseFirestore.instance
+        .collection('producto')
+        .where('nombre', isEqualTo: nombre)
+        .get()
+        .then((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        final producto =
+            querySnapshot.docs.first.data() as Map<String, dynamic>;
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Información del Producto'),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Nombre: ${producto['nombre']}'),
+                  Text('Descripción: ${producto['descripcion']}'),
+                  Text('Tipo de Material: ${producto['tipoDeMaterial']}'),
+                  Text('Tipo de Unidad: ${producto['unidad']}'),
+                  Text('Valor de Unidad: ${producto['valorUnidad']}'),
+                  Text('Dirección: ${producto['direccion']}'),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cerrar'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }).catchError((error) {
+      print('Error al obtener información del producto: $error');
+    });
   }
 
   @override
