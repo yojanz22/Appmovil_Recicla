@@ -8,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Authentication
+import 'editar_perfil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -134,6 +135,23 @@ class MyHomePage extends StatelessWidget {
               },
               icon: Icon(Icons.shopping_cart),
               label: Text('Explorar Productos'),
+            ),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+                onPrimary: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditarPerfilPage(), // Utiliza el nombre correcto de tu página de edición de perfil.
+                  ),
+                );
+              },
+              icon: Icon(Icons.person), // Icono para editar perfil
+              label: Text('Editar Perfil'),
             ),
           ],
         ),

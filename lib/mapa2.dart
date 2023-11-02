@@ -83,6 +83,13 @@ class _Mapa2PageState extends State<Mapa2Page> {
                   Text('Tipo de Unidad: ${producto['unidad']}'),
                   Text('Valor de Unidad: ${producto['valorUnidad']}'),
                   Text('Dirección: ${producto['direccion']}'),
+                  if (producto['imagenURL'] != null &&
+                      producto['imagenURL'] != 'Ruta de imagen no disponible')
+                    Image.network(
+                      producto['imagenURL'],
+                      width: 200,
+                      height: 200,
+                    ),
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
