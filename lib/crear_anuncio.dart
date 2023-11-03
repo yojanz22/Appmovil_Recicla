@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recicla/chat.dart';
 import 'dart:io';
 
 import 'package:recicla/mapa2.dart';
+import 'package:recicla/chat.dart'; // Importa la página de chat
 
 class CrearAnuncioPage extends StatefulWidget {
   final Position location;
@@ -39,6 +41,8 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         'ubicacion': ubicacion,
         'tipoDeMaterial': tipoDeMaterial,
         'imagenURL': selectedImage?.path,
+        'nombreUsuario':
+            'Nombre del usuario', // Agrega el nombre del usuario aquí
       }).then((value) {
         nombreController.clear();
         descripcionController.clear();
@@ -76,6 +80,18 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         selectedImage = pickedFile;
       });
     }
+  }
+
+  void _abrirChat() {
+    // Al abrir la página de chat, pasa el nombre del usuario
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+            nombreUsuario:
+                'Nombre del usuario'), // Cambia por el nombre del usuario real
+      ),
+    );
   }
 
   @override
@@ -225,6 +241,17 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 ),
               ),
               SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  _abrirChat();
+                },
+                child: Text('Abrir Chat'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(0, 128, 0, 0.5),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

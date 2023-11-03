@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:recicla/chat.dart';
 
 class Mapa2Page extends StatefulWidget {
   final Position location;
@@ -93,8 +94,10 @@ class _Mapa2PageState extends State<Mapa2Page> {
                   SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // Agrega aquí la lógica para hablar con la persona.
-                      Navigator.of(context).pop();
+                      // Navega a la página de chat y pasa el nombre como argumento.
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ChatPage(nombreUsuario: nombre),
+                      ));
                     },
                     child: Text('Hablar con la persona'),
                   ),
