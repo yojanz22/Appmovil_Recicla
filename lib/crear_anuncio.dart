@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,7 +33,13 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
     final ubicacion =
         GeoPoint(widget.location.latitude, widget.location.longitude);
 
-    if (nombre.isNotEmpty && descripcion.isNotEmpty && valorUnidad.isNotEmpty) {
+    // Obtiene el usuario actual de Firebase Authentication
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null &&
+        nombre.isNotEmpty &&
+        descripcion.isNotEmpty &&
+        valorUnidad.isNotEmpty) {
       FirebaseFirestore.instance.collection('producto').add({
         'nombre': nombre,
         'descripcion': descripcion,
@@ -42,7 +49,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         'tipoDeMaterial': tipoDeMaterial,
         'imagenURL': selectedImage?.path,
         'nombreUsuario':
-            'Nombre del usuario', // Agrega el nombre del usuario aquí
+            user.displayName, // Utiliza el nombre del usuario actual
       }).then((value) {
         nombreController.clear();
         descripcionController.clear();
