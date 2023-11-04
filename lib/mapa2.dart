@@ -84,20 +84,21 @@ class _Mapa2PageState extends State<Mapa2Page> {
                   Text('Tipo de Unidad: ${producto['unidad']}'),
                   Text('Valor de Unidad: ${producto['valorUnidad']}'),
                   Text('Dirección: ${producto['direccion']}'),
-                  if (producto['imagenURL'] != null &&
-                      producto['imagenURL'] != 'Ruta de imagen no disponible')
-                    Image.network(
-                      producto['imagenURL'],
-                      width: 200,
-                      height: 200,
-                    ),
-                  SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // Navega a la página de chat y pasa el nombre como argumento.
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ChatPage(nombreUsuario: nombre),
-                      ));
+                      if (nombre.isNotEmpty) {
+                        // Navega a la página de chat solo si nombre es válido.
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChatPage(
+                            nombreUsuario: nombre,
+                            userId: '',
+                            otherUserId: '',
+                          ),
+                        ));
+                      } else {
+                        // Maneja el caso en el que nombre esté vacío o nulo.
+                        // Puedes mostrar un mensaje de error o realizar otra acción apropiada.
+                      }
                     },
                     child: Text('Hablar con la persona'),
                   ),

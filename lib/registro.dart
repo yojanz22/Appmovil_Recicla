@@ -22,18 +22,21 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       if (_passwordController.text == _confirmPasswordController.text) {
         try {
-          await _auth.createUserWithEmailAndPassword(
+          final userCredential = await _auth.createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
 
-          // Registro exitoso, redirige a la página de menú o a donde desees.
+          // Establece el nombre de usuario
+          await userCredential.user
+              ?.updateProfile(displayName: _nameController.text);
+
+          // Luego, puedes redirigir al usuario y guardar los datos adicionales en Firestore
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => MenuPage()));
 
-          // Agrega el registro a Firebase Firestore utilizando la instancia del servicio
           Map<String, dynamic> registroData = {
-            'nombre': _nameController.text,
+            'nombreUsuario': _nameController.text,
             'correo': _emailController.text,
             'otroCampo': 'Valor', // Otros campos de registro
           };

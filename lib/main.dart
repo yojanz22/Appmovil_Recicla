@@ -1,13 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Authentication
+import 'package:recicla/firebase_options.dart';
+import 'package:recicla/services/auth_service.dart';
 import 'mapa.dart';
 import 'splash_screen.dart';
 import 'productos.dart';
 import 'crear_anuncio.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Authentication
 import 'editar_perfil.dart';
 
 void main() async {
@@ -63,9 +63,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return MaterialApp(
       title: 'Mi App',
-      home: MyHomePage(title: 'Página de Inicio'),
+      home: MyHomePage(title: 'Página de Inicio', user: user),
       theme: ThemeData(
         primaryColor: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
@@ -76,8 +78,10 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
   final String title;
+  final User? user;
 
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title, required this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -104,11 +108,11 @@ class MyHomePage extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text("Nombre de Usuario"),
-              accountEmail: Text("usuario@email.com"),
+              accountName: Text(user?.displayName ?? "Nombre de Usuario"),
+              accountEmail: Text(user?.email ?? "usuario@email.com"),
               currentAccountPicture: CircleAvatar(
-                backgroundImage: AssetImage(
-                    "assets/profile_image.jpg"), // Agrega una imagen de perfil
+                backgroundImage: NetworkImage(user?.photoURL ??
+                    ""), // Agrega la imagen de perfil del usuario
               ),
             ),
             ListTile(

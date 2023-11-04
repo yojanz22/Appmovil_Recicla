@@ -88,8 +88,10 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       context,
       MaterialPageRoute(
         builder: (context) => ChatPage(
-            nombreUsuario:
-                'Nombre del usuario'), // Cambia por el nombre del usuario real
+          nombreUsuario: 'Nombre del usuario',
+          userId: '',
+          otherUserId: '',
+        ), // Cambia por el nombre del usuario real
       ),
     );
   }
