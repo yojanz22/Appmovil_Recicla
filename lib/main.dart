@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Authentication
+import 'package:recicla/buzon.dart';
 import 'package:recicla/firebase_options.dart';
 import 'package:recicla/services/auth_service.dart';
 import 'mapa.dart';
@@ -136,6 +137,18 @@ class MyHomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SplashScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Buzón de Mensajes'),
+              leading: Icon(Icons.mail),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BuzonPage(),
                   ),
                 );
               },
