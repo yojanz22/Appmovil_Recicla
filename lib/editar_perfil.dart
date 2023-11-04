@@ -39,16 +39,16 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         // Actualiza el nombre del usuario en Firebase Authentication
         await user.updateProfile(displayName: _nameController.text);
 
-        // Si deseas cambiar la contraseña, puedes hacerlo de la siguiente manera:
+        // Si se proporciona una nueva contraseña, cámbiala
         if (_newPasswordController.text.isNotEmpty) {
           await user.updatePassword(_newPasswordController.text);
         }
 
-        // Actualiza los valores en Firebase Firestore utilizando .set con merge: true
+        // Actualiza los valores en Firebase Firestore utilizando .set
         await userDataRef!.set({
-          'nombre': _nameController.text,
+          'nombreUsuario': _nameController.text,
           'correo': _emailController.text,
-        }, SetOptions(merge: true));
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Perfil actualizado correctamente')),
@@ -62,7 +62,6 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
         );
       }
     } else {
-      // Maneja el caso en el que el usuario no esté autenticado (user == null)
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Usuario no autenticado')),
       );
@@ -81,7 +80,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
           children: <Widget>[
             TextFormField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Nombre'),
+              decoration: InputDecoration(labelText: 'Nombre de Usuario'),
             ),
             TextFormField(
               controller: _emailController,
