@@ -45,7 +45,8 @@ class _Mapa2PageState extends State<Mapa2Page> {
       querySnapshot.docs.forEach((doc) {
         final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         final GeoPoint ubicacion = data['ubicacion'] as GeoPoint;
-        final String nombre = data['nombre'] as String;
+        final String nombre =
+            data['nombreProducto'] as String; // Cambia el nombre del campo
 
         final customMarker = _buildCustomMarker(
           nombre,
@@ -63,7 +64,8 @@ class _Mapa2PageState extends State<Mapa2Page> {
   void _showProductInfo(String nombre) {
     FirebaseFirestore.instance
         .collection('producto')
-        .where('nombre', isEqualTo: nombre)
+        .where('nombreProducto',
+            isEqualTo: nombre) // Cambia el nombre del campo
         .get()
         .then((querySnapshot) {
       if (querySnapshot.docs.isNotEmpty) {
@@ -78,7 +80,8 @@ class _Mapa2PageState extends State<Mapa2Page> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Nombre: ${producto['nombre']}'),
+                  Text(
+                      'Nombre: ${producto['nombreProducto']}'), // Cambia el nombre del campo
                   Text('Descripción: ${producto['descripcion']}'),
                   Text('Tipo de Material: ${producto['tipoDeMaterial']}'),
                   Text('Tipo de Unidad: ${producto['unidad']}'),
@@ -86,19 +89,19 @@ class _Mapa2PageState extends State<Mapa2Page> {
                   Text('Dirección: ${producto['direccion']}'),
                   ElevatedButton(
                     onPressed: () {
-                      if (nombre.isNotEmpty) {
-                        // Navega a la página de chat solo si nombre es válido.
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            nombreUsuario: nombre,
-                            userId: '',
-                            otherUserId: '',
-                          ),
-                        ));
-                      } else {
-                        // Maneja el caso en el que nombre esté vacío o nulo.
-                        // Puedes mostrar un mensaje de error o realizar otra acción apropiada.
-                      }
+                      final nombreUsuario = producto[
+                          'nombreUsuario']; // Obtiene el nombre del usuario
+                      final userId = ''; // Puedes llenar esto si es necesario
+                      final otherUserId =
+                          ''; // Puedes llenar esto si es necesario
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          nombreUsuario: nombreUsuario,
+                          userId: userId,
+                          otherUserId: otherUserId,
+                        ),
+                      ));
                     },
                     child: Text('Hablar con la persona'),
                   ),

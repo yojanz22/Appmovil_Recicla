@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 
 class ChatPage extends StatelessWidget {
   final String nombreUsuario;
-  final String userId; // Asegúrate de que tengas el userId y otherUserId
+  final String userId;
   final String otherUserId;
 
-  ChatPage(
-      {required this.nombreUsuario,
-      required this.userId,
-      required this.otherUserId});
+  ChatPage({
+    required this.nombreUsuario, // Utiliza nombreUsuario en lugar del nombre del producto
+    required this.userId,
+    required this.otherUserId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,8 @@ class ChatPage extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-              'Chat con $nombreUsuario'), // Aquí mostramos el nombre del usuario
+            'Chat con $nombreUsuario', // Muestra el nombre de la persona que creó el producto
+          ),
         ),
         body: Column(
           children: [

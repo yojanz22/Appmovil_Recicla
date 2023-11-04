@@ -20,7 +20,8 @@ class CrearAnuncioPage extends StatefulWidget {
 }
 
 class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
-  final TextEditingController nombreController = TextEditingController();
+  final TextEditingController nombreProductoController =
+      TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
   String tipoDeMaterial = 'Plásticos';
   String tipoDeUnidad = 'KG';
@@ -28,7 +29,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
   XFile? selectedImage;
 
   void _crearAnuncio(BuildContext context) async {
-    final nombre = nombreController.text;
+    final nombreProducto = nombreProductoController.text;
     final descripcion = descripcionController.text;
     final ubicacion =
         GeoPoint(widget.location.latitude, widget.location.longitude);
@@ -37,11 +38,11 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null &&
-        nombre.isNotEmpty &&
+        nombreProducto.isNotEmpty &&
         descripcion.isNotEmpty &&
         valorUnidad.isNotEmpty) {
       FirebaseFirestore.instance.collection('producto').add({
-        'nombre': nombre,
+        'nombreProducto': nombreProducto,
         'descripcion': descripcion,
         'unidad': tipoDeUnidad,
         'valorUnidad': valorUnidad,
@@ -51,7 +52,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         'nombreUsuario':
             user.displayName, // Utiliza el nombre del usuario actual
       }).then((value) {
-        nombreController.clear();
+        nombreProductoController.clear();
         descripcionController.clear();
         valorUnidad = '';
         ScaffoldMessenger.of(context).showSnackBar(
@@ -144,7 +145,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               TextField(
-                controller: nombreController,
+                controller: nombreProductoController,
                 decoration: InputDecoration(
                   hintText: 'Ingrese el nombre del producto',
                 ),
@@ -250,17 +251,6 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 ),
               ),
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  _abrirChat();
-                },
-                child: Text('Abrir Chat'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(0, 128, 0, 0.5),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
