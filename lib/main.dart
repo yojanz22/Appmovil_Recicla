@@ -10,6 +10,7 @@ import 'splash_screen.dart';
 import 'productos.dart';
 import 'crear_anuncio.dart';
 import 'editar_perfil.dart';
+import 'package:recicla/buzon.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

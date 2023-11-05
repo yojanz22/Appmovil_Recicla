@@ -41,7 +41,8 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         nombreProducto.isNotEmpty &&
         descripcion.isNotEmpty &&
         valorUnidad.isNotEmpty) {
-      FirebaseFirestore.instance.collection('producto').add({
+      final anuncioRef =
+          await FirebaseFirestore.instance.collection('producto').add({
         'nombreProducto': nombreProducto,
         'descripcion': descripcion,
         'unidad': tipoDeUnidad,
@@ -51,24 +52,33 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         'imagenURL': selectedImage?.path,
         'nombreUsuario':
             user.displayName, // Utiliza el nombre del usuario actual
-      }).then((value) {
-        nombreProductoController.clear();
-        descripcionController.clear();
-        valorUnidad = '';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Anuncio creado con éxito'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error al crear el anuncio: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        'userId': user.uid, // Agrega el ID de usuario
       });
+
+      final anuncioId = anuncioRef.id; // Obtén el ID del anuncio creado
+
+      FirebaseFirestore.instance.collection('producto').doc(anuncioId).update({
+        'anuncioId': anuncioId, // Agrega el ID del anuncio a sí mismo
+      });
+
+      FirebaseFirestore.instance
+          .collection('producto')
+          .doc(anuncioId)
+          .collection('conversations')
+          .add({
+        'users': [user.uid], // Añade el usuario actual a la conversación
+        'anuncioId': anuncioId, // Agrega el ID del anuncio a la conversación
+      });
+
+      nombreProductoController.clear();
+      descripcionController.clear();
+      valorUnidad = '';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Anuncio creado con éxito'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -88,20 +98,6 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         selectedImage = pickedFile;
       });
     }
-  }
-
-  void _abrirChat() {
-    // Al abrir la página de chat, pasa el nombre del usuario
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatPage(
-          nombreUsuario: 'Nombre del usuario',
-          userId: '',
-          otherUserId: '',
-        ), // Cambia por el nombre del usuario real
-      ),
-    );
   }
 
   @override
