@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:recicla/crear_anuncio.dart';
 import 'dart:io';
+
+import 'package:recicla/producto.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -126,6 +129,31 @@ class _ProductosPageState extends State<ProductosPage> {
                                 'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}',
                               ),
                             ],
+                          ),
+                        ),
+                        // Agregar onTap para mostrar detalles del producto
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DetalleProductoPage(producto: producto),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            color: Colors.blue, // Cambia el color a tu gusto
+                            child: Center(
+                              child: Text(
+                                'Ver Detalles',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
