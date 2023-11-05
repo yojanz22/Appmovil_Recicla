@@ -22,11 +22,34 @@ class _ChatPageState extends State<ChatPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController messageController = TextEditingController();
   late User currentUser;
+  List<String> messages = []; // Lista para almacenar los mensajes
 
   @override
   void initState() {
     super.initState();
     currentUser = _auth.currentUser!;
+    _loadMessages(); // Carga los mensajes existentes al inicio
+  }
+
+  void _loadMessages() {
+    _firestore
+        .collection('chats')
+        .where('senderId', isEqualTo: currentUser.uid)
+        .where('receiverId', isEqualTo: widget.otherUserId)
+        .orderBy('timestamp', descending: true)
+        .get()
+        .then((querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        messages.clear(); // Limpia la lista actual
+        querySnapshot.docs.forEach((doc) {
+          final messageText = doc['text'];
+          messages.add(messageText); // Agrega los mensajes a la lista
+        });
+        setState(() {}); // Actualiza la UI para mostrar los mensajes
+      }
+    }).catchError((error) {
+      print('Error loading messages: $error');
+    });
   }
 
   void _sendMessage(String text) async {
@@ -38,6 +61,7 @@ class _ChatPageState extends State<ChatPage> {
         'timestamp': FieldValue.serverTimestamp(),
       });
       messageController.clear();
+      _loadMessages(); // Carga los mensajes actualizados
     } catch (e) {
       print('Error sending message: $e');
     }
@@ -52,30 +76,10 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: StreamBuilder(
-              stream: _firestore
-                  .collection('chats')
-                  .where('senderId', isEqualTo: currentUser.uid)
-                  .where('receiverId', isEqualTo: widget.otherUserId)
-                  .orderBy('timestamp', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return CircularProgressIndicator();
-                }
-
-                final messages = snapshot.data!.docs;
-                List<Widget> messageWidgets = [];
-                for (var message in messages) {
-                  final messageText = message['text'];
-                  messageWidgets.add(Text(messageText));
-                }
-
-                return ListView(
-                  reverse: true,
-                  children: messageWidgets,
-                );
-              },
+            child: ListView(
+              reverse: true,
+              children:
+                  messages.map((messageText) => Text(messageText)).toList(),
             ),
           ),
           Padding(
