@@ -24,9 +24,15 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
   String tipoDeMaterial = 'Plásticos';
-  String tipoDeUnidad = 'KG';
   String valorUnidad = '';
   XFile? selectedImage;
+
+  bool isNumeric(String s) {
+    if (s == null) {
+      return false;
+    }
+    return double.tryParse(s) != null;
+  }
 
   void _crearAnuncio(BuildContext context) async {
     final nombreProducto = nombreProductoController.text;
@@ -40,12 +46,11 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
     if (user != null &&
         nombreProducto.isNotEmpty &&
         descripcion.isNotEmpty &&
-        valorUnidad.isNotEmpty) {
+        isNumeric(valorUnidad)) {
       final anuncioRef =
           await FirebaseFirestore.instance.collection('producto').add({
         'nombreProducto': nombreProducto,
         'descripcion': descripcion,
-        'unidad': tipoDeUnidad,
         'valorUnidad': valorUnidad,
         'ubicacion': ubicacion,
         'tipoDeMaterial': tipoDeMaterial,
@@ -137,7 +142,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
               ),
               SizedBox(height: 16),
               Text(
-                'Nombre del Producto',
+                'Nombre del producto que quieres Reciclar',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               TextField(
@@ -148,52 +153,18 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
               ),
               SizedBox(height: 16),
               Text(
-                'Tipo de Unidad',
+                'Peso',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              Row(
-                children: [
-                  DropdownButton<String>(
-                    value: tipoDeUnidad,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        tipoDeUnidad = newValue!;
-                        if (tipoDeUnidad == 'Cantidad') {
-                          valorUnidad = '';
-                        }
-                      });
-                    },
-                    items: <String>[
-                      'KG',
-                      'Cantidad',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              if (tipoDeUnidad == 'KG')
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Ingresa el peso (KG)',
-                  ),
-                  onChanged: (value) {
-                    valorUnidad = value;
-                  },
-                )
-              else if (tipoDeUnidad == 'Cantidad')
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Ingresa la cantidad',
-                  ),
-                  onChanged: (value) {
-                    valorUnidad = value;
-                  },
+              TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Ingrese el peso total',
                 ),
+                onChanged: (value) {
+                  valorUnidad = value;
+                },
+              ),
               SizedBox(height: 16),
               Text(
                 'Descripción',
@@ -205,11 +176,14 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                   hintText: 'Ingrese una descripción',
                 ),
               ),
-              ElevatedButton(
+              if (selectedImage != null) Image.file(File(selectedImage!.path)),
+              SizedBox(height: 16),
+              ElevatedButton.icon(
                 onPressed: () {
                   _tomarFoto();
                 },
-                child: Text('Tomar Foto'),
+                icon: Icon(Icons.camera_alt),
+                label: Text('Tomar Foto'),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
                     Color.fromRGBO(0, 128, 0, 0.5),
@@ -217,36 +191,23 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 ),
               ),
               SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          Mapa2Page(location: widget.location),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _crearAnuncio(context);
+                      },
+                      child: Text('Crear Anuncio'),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromRGBO(0, 128, 0, 0.5),
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: Text('Ver Mapa'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(0, 128, 0, 0.5),
                   ),
-                ),
+                ],
               ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  _crearAnuncio(context);
-                },
-                child: Text('Crear Anuncio'),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(0, 128, 0, 0.5),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
             ],
           ),
         ),

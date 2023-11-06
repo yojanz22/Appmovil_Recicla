@@ -24,7 +24,6 @@ class _MapScreenState extends State<MapScreen> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Si los servicios de ubicación no están habilitados, muestra una alerta al usuario.
       _showLocationServiceAlert();
       return;
     }
@@ -33,7 +32,6 @@ class _MapScreenState extends State<MapScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Si el usuario deniega los permisos de ubicación, muestra una alerta.
         _showLocationPermissionAlert();
         return;
       }
@@ -95,40 +93,65 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Map Sample App'),
+        title: Text(''), // Título vacío
         backgroundColor: Colors.green[700],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                if (_locationObtained) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          Mapa2Page(location: _currentPosition),
-                    ),
-                  );
-                }
-              },
-              child: Text('Ir a Mapa 2'),
+            SizedBox(
+              width: 150, // Tamaño cuadrado
+              height: 150, // Tamaño cuadrado
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  if (_locationObtained) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Mapa2Page(location: _currentPosition),
+                      ),
+                    );
+                  }
+                },
+                icon: Icon(Icons.map, size: 60), // Icono de mapa
+                label: Text('Ver productos en el mapa'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0), // Cuadrado
+                  ),
+                  textStyle: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_locationObtained) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          CrearAnuncioPage(location: _currentPosition),
-                    ),
-                  );
-                }
-              },
-              child: Text('Crear Anuncio'),
+            SizedBox(height: 20),
+            SizedBox(
+              width: 150, // Tamaño cuadrado
+              height: 150, // Tamaño cuadrado
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  if (_locationObtained) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CrearAnuncioPage(location: _currentPosition),
+                      ),
+                    );
+                  }
+                },
+                icon: Icon(Icons.add, size: 60), // Icono de crear
+                label: Text('Crear una alerta'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0), // Cuadrado
+                  ),
+                  textStyle: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
           ],
         ),

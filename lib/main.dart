@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Importa Firebase Authentication
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recicla/buzon.dart';
 import 'package:recicla/firebase_options.dart';
 import 'package:recicla/services/auth_service.dart';
@@ -10,7 +10,6 @@ import 'splash_screen.dart';
 import 'productos.dart';
 import 'crear_anuncio.dart';
 import 'editar_perfil.dart';
-import 'package:recicla/buzon.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,7 +68,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Mi App',
-      home: MyHomePage(title: 'Página de Inicio', user: user),
+      home: MyHomePage(title: 'Menu principal', user: user),
       theme: ThemeData(
         primaryColor: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
@@ -78,7 +77,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   final String title;
   final User? user;
 
@@ -86,21 +85,33 @@ class MyHomePage extends StatelessWidget {
       : super(key: key);
 
   @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  bool _showWelcome = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        _showWelcome = false;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SplashScreen(),
-                ),
-              );
+            onPressed: () {
+              _showLogoutConfirmationDialog(context);
             },
           ),
         ],
@@ -110,11 +121,11 @@ class MyHomePage extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text(user?.displayName ?? "Nombre de Usuario"),
-              accountEmail: Text(user?.email ?? "usuario@email.com"),
+              accountName:
+                  Text(widget.user?.displayName ?? "Nombre de Usuario"),
+              accountEmail: Text(widget.user?.email ?? "usuario@email.com"),
               currentAccountPicture: CircleAvatar(
-                backgroundImage: NetworkImage(user?.photoURL ??
-                    ""), // Agrega la imagen de perfil del usuario
+                backgroundImage: NetworkImage(widget.user?.photoURL ?? ""),
               ),
             ),
             ListTile(
@@ -132,14 +143,8 @@ class MyHomePage extends StatelessWidget {
             ListTile(
               title: Text('Desconectarse'),
               leading: Icon(Icons.power_settings_new),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SplashScreen(),
-                  ),
-                );
+              onTap: () {
+                _showLogoutConfirmationDialog(context);
               },
             ),
             ListTile(
@@ -161,15 +166,21 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              '¡Bienvenido!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            Visibility(
+              visible: _showWelcome,
+              child: AnimatedOpacity(
+                opacity: _showWelcome ? 1.0 : 0.0,
+                duration: Duration(seconds: 1),
+                child: Text(
+                  '¡Bienvenido, ${widget.user?.displayName}!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 20),
-            // Imagen "Explorar en tu zona" con enlace a la página de Mapa
             InkWell(
               onTap: () {
                 Navigator.push(
@@ -180,13 +191,11 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: CircleAvatar(
-                radius: 50, // Ajusta el tamaño del círculo
-                backgroundImage: AssetImage(
-                    'assets/map1.jpeg'), // Ruta de la imagen del mapa
+                radius: 50,
+                backgroundImage: AssetImage('assets/map1.jpeg'),
               ),
             ),
             SizedBox(height: 20),
-            // Imagen "Productos disponibles" con enlace a la página de Productos
             InkWell(
               onTap: () {
                 Navigator.push(
@@ -197,14 +206,44 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: CircleAvatar(
-                radius: 50, // Ajusta el tamaño del círculo
-                backgroundImage: AssetImage(
-                    'assets/carrito.jpeg'), // Ruta de la imagen de productos
+                radius: 50,
+                backgroundImage: AssetImage('assets/carrito.jpeg'),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('¿Está seguro de que desea salir?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Salir'),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SplashScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

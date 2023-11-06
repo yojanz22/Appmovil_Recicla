@@ -45,8 +45,7 @@ class _Mapa2PageState extends State<Mapa2Page> {
       querySnapshot.docs.forEach((doc) {
         final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         final GeoPoint ubicacion = data['ubicacion'] as GeoPoint;
-        final String nombre =
-            data['nombreProducto'] as String; // Cambia el nombre del campo
+        final String nombre = data['nombreProducto'] as String;
 
         final customMarker = _buildCustomMarker(
           nombre,
@@ -64,49 +63,56 @@ class _Mapa2PageState extends State<Mapa2Page> {
   void _showProductInfo(String nombre) {
     FirebaseFirestore.instance
         .collection('producto')
-        .where('nombreProducto',
-            isEqualTo: nombre) // Cambia el nombre del campo
+        .where('nombreProducto', isEqualTo: nombre)
         .get()
         .then((querySnapshot) {
       if (querySnapshot.docs.isNotEmpty) {
         final producto =
             querySnapshot.docs.first.data() as Map<String, dynamic>;
 
-        showModalBottomSheet(
+        showDialog(
           context: context,
           builder: (context) {
-            return Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
+            return AlertDialog(
+              title: Text(
+                nombre, // Aquí se mostrará el nombre del producto
+                style: TextStyle(color: Colors.red, fontSize: 24),
+              ),
+              content: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                      'Nombre: ${producto['nombreProducto']}'), // Cambia el nombre del campo
                   Text('Descripción: ${producto['descripcion']}'),
                   Text('Tipo de Material: ${producto['tipoDeMaterial']}'),
-                  Text('Tipo de Unidad: ${producto['unidad']}'),
-                  Text('Valor de Unidad: ${producto['valorUnidad']}'),
-                  Text('Dirección: ${producto['direccion']}'),
-                  ElevatedButton(
-                    onPressed: () {
-                      final nombreUsuario = producto[
-                          'nombreUsuario']; // Obtiene el nombre del usuario
-                      final userId = ''; // Puedes llenar esto si es necesario
-                      final otherUserId =
-                          ''; // Puedes llenar esto si es necesario
-
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => ChatPage(
-                          nombreUsuario: nombreUsuario,
-                          userId: userId,
-                          otherUserId: otherUserId,
-                        ),
-                      ));
-                    },
-                    child: Text('Hablar con la persona'),
-                  ),
+                  Text(
+                      'Valor de Unidad: Peso de ${producto['valorUnidad']} KG'),
                 ],
               ),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    final nombreUsuario = producto['nombreUsuario'];
+                    final userId = ''; // Puedes llenar esto si es necesario
+                    final otherUserId =
+                        ''; // Puedes llenar esto si es necesario
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ChatPage(
+                        nombreUsuario: nombreUsuario,
+                        userId: userId,
+                        otherUserId: otherUserId,
+                      ),
+                    ));
+                  },
+                  child: Text('Hablar con la persona'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cerrar'),
+                ),
+              ],
             );
           },
         );
