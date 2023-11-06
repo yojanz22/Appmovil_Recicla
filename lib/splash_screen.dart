@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'menuL.dart'; // Importa la página de menú
+import 'login.dart'; // Importa la página de inicio de sesión
 import 'services/auth_service.dart'; // Importa la clase de servicio de autenticación
 
 void main() async {
@@ -23,24 +23,22 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(
-          seconds: 5), // Ajusta la duración para una rotación más lenta
+      duration: Duration(seconds: 5),
       vsync: this,
     );
-    _controller.repeat(
-        reverse: true); // Hacer que la animación rote continuamente
+    _controller.repeat(reverse: true);
 
     // Realizar la verificación de autenticación
     _authService.checkAuthentication().then((isAuthenticated) {
-      if (isAuthenticated) {
-        // Si el usuario está autenticado, navega a la página de menú
+      Future.delayed(Duration(seconds: 3), () {
+        // Espera 3 segundos y luego navega a la página de inicio de sesión
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MenuPage(),
+            builder: (context) => LoginPage(), // Cambiado a LoginPage
           ),
         );
-      }
+      });
     });
   }
 
@@ -58,19 +56,18 @@ class _SplashScreenState extends State<SplashScreen>
           animation: _controller,
           builder: (context, child) {
             return Transform.rotate(
-              angle: _controller.value * 6.3, // Rotar de 0 a 360 grados
+              angle: _controller.value * 6.3,
               child: GestureDetector(
                 onTap: () {
-                  // Al tocar la pantalla, navega a la página de menú
+                  // Al tocar la pantalla, navega a la página de inicio de sesión
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MenuPage(),
+                      builder: (context) => LoginPage(),
                     ),
                   );
                 },
                 child: ClipOval(
-                  // Agregamos ClipOval para hacer el logotipo redondo
                   child: Image.asset(
                     'assets/logo.jpeg',
                     width: 150,

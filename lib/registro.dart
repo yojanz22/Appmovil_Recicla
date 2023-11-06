@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:recicla/services/firebase_services.dart';
-import 'menuL.dart'; // Importa la página de menú
+import 'main.dart'; // Importa la página principal
+import 'login.dart'; // Importa la página de inicio de sesión
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,7 +10,6 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseService _firebaseService = FirebaseService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -33,14 +32,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
           // Luego, puedes redirigir al usuario y guardar los datos adicionales en Firestore
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => MenuPage()));
-
-          Map<String, dynamic> registroData = {
-            'nombreUsuario': _nameController.text,
-            'correo': _emailController.text,
-            'otroCampo': 'Valor', // Otros campos de registro
-          };
-          await _firebaseService.addRegistro(registroData);
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyApp(), // Cambiado a la página principal
+            ),
+          );
         } catch (e) {
           // Manejo de errores, como correo ya en uso
           ScaffoldMessenger.of(context).showSnackBar(
@@ -56,12 +52,17 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
+  void _navigateToLogin(BuildContext context) {
+    // Navegar a la página de inicio de sesión cuando se toque el texto
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Registro'),
-      ),
       body: Center(
         child: Container(
           width: 350,
@@ -191,6 +192,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    _navigateToLogin(context);
+                  },
+                  child: Text(
+                    '¿Ya tengo una cuenta?',
+                    style: TextStyle(color: Colors.blue, fontSize: 18),
                   ),
                 ),
               ],

@@ -17,6 +17,8 @@ dependencies:
   image_picker: ^1.0.4
   camera: ^0.10.5+5
   permission_handler: ^11.0.1
+  particle_field: ^1.0.0
+  flutter_neumorphic: ^3.2.0
 
   #mapa
   google_maps_flutter: ^2.5.0  # Utiliza la versión adecuada
@@ -41,5 +43,8 @@ flutter:
     - assets/logo.jpeg
     - assets/login.jpeg
     - assets/fondo.jpeg
+    - assets/login.jpeg
+    - assets/map1.jpeg
+    - assets/carrito.jpeg
 
   

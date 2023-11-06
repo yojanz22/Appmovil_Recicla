@@ -169,13 +169,9 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              ),
-              onPressed: () {
+            // Imagen "Explorar en tu zona" con enlace a la página de Mapa
+            InkWell(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -183,19 +179,16 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                'Ver Mapa',
-                style: TextStyle(fontSize: 18),
+              child: CircleAvatar(
+                radius: 50, // Ajusta el tamaño del círculo
+                backgroundImage: AssetImage(
+                    'assets/map1.jpeg'), // Ruta de la imagen del mapa
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              ),
-              onPressed: () {
+            // Imagen "Productos disponibles" con enlace a la página de Productos
+            InkWell(
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -203,9 +196,10 @@ class MyHomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(
-                'Explorar Productos',
-                style: TextStyle(fontSize: 18),
+              child: CircleAvatar(
+                radius: 50, // Ajusta el tamaño del círculo
+                backgroundImage: AssetImage(
+                    'assets/carrito.jpeg'), // Ruta de la imagen de productos
               ),
             ),
           ],

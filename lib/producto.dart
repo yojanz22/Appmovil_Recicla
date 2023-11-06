@@ -18,11 +18,13 @@ class DetalleProductoPage extends StatelessWidget {
           children: <Widget>[
             if (producto['imagenURL'] != null &&
                 producto['imagenURL'] != 'Ruta de imagen no disponible')
-              Image.network(
-                producto['imagenURL'],
+              Container(
                 width: double.infinity,
                 height: 200,
-                fit: BoxFit.cover,
+                child: Image.network(
+                  producto['imagenURL'],
+                  fit: BoxFit.cover,
+                ),
               ),
             SizedBox(height: 16),
             Text(
@@ -32,21 +34,57 @@ class DetalleProductoPage extends StatelessWidget {
                 fontSize: 24,
               ),
             ),
-            Text(
-              producto['descripcion'] ?? 'Descripción no disponible',
-              style: TextStyle(fontSize: 18),
+            ListTile(
+              title: Text(
+                'Descripción:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                producto['descripcion'] ?? 'Descripción no disponible',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
-            Text(
-              'Tipo de Unidad: ${producto['unidad'] ?? 'Unidad no disponible'}',
-              style: TextStyle(fontSize: 16),
+            ListTile(
+              title: Text(
+                'Tipo de Unidad:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                producto['unidad'] ?? 'Unidad no disponible',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
-            Text(
-              'Valor de Unidad: ${producto['valorUnidad'] ?? 'Valor no disponible'}',
-              style: TextStyle(fontSize: 16),
+            ListTile(
+              title: Text(
+                'Valor de Unidad:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                producto['valorUnidad'] ?? 'Valor no disponible',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
-            Text(
-              'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}',
-              style: TextStyle(fontSize: 16),
+            ListTile(
+              title: Text(
+                'Dirección:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              subtitle: Text(
+                producto['direccion'] ?? 'Dirección no disponible',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ],
         ),
