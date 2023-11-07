@@ -97,15 +97,27 @@ class _ProductosPageState extends State<ProductosPage> {
                     elevation: 4,
                     child: Column(
                       children: [
-                        if (producto['imagenURL'] != null &&
-                            producto['imagenURL'] !=
-                                'Ruta de imagen no disponible')
-                          Image.file(
-                            File(producto['imagenURL']),
-                            width: double.infinity,
-                            height: 200, // Tamaño fijo para la imagen cuadrada
-                            fit: BoxFit.cover,
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 8), // Margen superior para la imagen
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetalleProductoPage(producto: producto),
+                                ),
+                              );
+                            },
+                            child: Image.file(
+                              File(producto['imagenURL']),
+                              width: double.infinity,
+                              height: 200, // Tamaño fijo para la imagen
+                              fit: BoxFit.cover,
+                            ),
                           ),
+                        ),
                         ListTile(
                           title: Text(
                             producto['nombreProducto'] ??
@@ -117,30 +129,6 @@ class _ProductosPageState extends State<ProductosPage> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DetalleProductoPage(producto: producto),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            color: Colors.blue,
-                            child: Center(
-                              child: Text(
-                                'Ver Detalles',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
                       ],
                     ),
                   );
