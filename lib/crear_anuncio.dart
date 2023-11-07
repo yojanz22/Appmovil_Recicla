@@ -80,15 +80,25 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       valorUnidad = '';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Anuncio creado con éxito'),
+          content: Text(
+            'Anuncio creado con éxito',
+            style: TextStyle(fontSize: 18), // Aumenta el tamaño del texto
+          ),
           backgroundColor: Colors.green,
+          behavior: SnackBarBehavior
+              .floating, // Coloca la alerta en la parte superior
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Por favor, complete todos los campos correctamente'),
+          content: Text(
+            'Por favor, complete todos los campos correctamente',
+            style: TextStyle(fontSize: 18), // Aumenta el tamaño del texto
+          ),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior
+              .floating, // Coloca la alerta en la parte superior
         ),
       );
     }
@@ -102,6 +112,17 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       setState(() {
         selectedImage = pickedFile;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Imagen subida correctamente',
+            style: TextStyle(fontSize: 18), // Aumenta el tamaño del texto
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior
+              .floating, // Coloca la alerta en la parte superior
+        ),
+      );
     }
   }
 
@@ -112,7 +133,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         title: Text('Crear Anuncio'),
       ),
       body: Center(
-        child: Container(
+        child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
             children: [
@@ -176,38 +197,38 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                   hintText: 'Ingrese una descripción',
                 ),
               ),
-              if (selectedImage != null) Image.file(File(selectedImage!.path)),
-              SizedBox(height: 16),
-              ElevatedButton.icon(
+              ElevatedButton(
                 onPressed: () {
                   _tomarFoto();
                 },
-                icon: Icon(Icons.camera_alt),
-                label: Text('Tomar Foto'),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
                     Color.fromRGBO(0, 128, 0, 0.5),
                   ),
                 ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.camera_alt),
+                    Text('Tomar Foto'),
+                  ],
+                ),
               ),
-              SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _crearAnuncio(context);
-                      },
-                      child: Text('Crear Anuncio'),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromRGBO(0, 128, 0, 0.5),
-                        ),
-                      ),
-                    ),
+              ElevatedButton(
+                onPressed: () {
+                  _crearAnuncio(context);
+                },
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all<Size>(
+                    Size(double.infinity,
+                        50), // Set the desired width and height
                   ),
-                ],
-              ),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    Color.fromRGBO(0, 128, 0, 0.5),
+                  ),
+                ),
+                child: Text('Crear Anuncio'),
+              )
             ],
           ),
         ),

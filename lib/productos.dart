@@ -84,58 +84,41 @@ class _ProductosPageState extends State<ProductosPage> {
             final productos = snapshot.data as List<Map<String, dynamic>>;
 
             if (productos.isNotEmpty) {
-              return GridView.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200, // Ancho máximo de cada elemento
-                  mainAxisSpacing: 16, // Espaciado vertical
-                  crossAxisSpacing: 16, // Espaciado horizontal
-                ),
+              return ListView.builder(
                 itemCount: productos.length,
                 itemBuilder: (context, index) {
                   final producto = productos[index];
                   return Card(
                     elevation: 4,
+                    margin: EdgeInsets.all(8),
                     child: Column(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            width: double.infinity,
-                            height: 200,
-                            child: Image.file(
-                              File(producto['imagenURL']),
-                              fit: BoxFit.cover,
-                            ),
+                        if (producto['imagenURL'] != null &&
+                            producto['imagenURL'] !=
+                                'Ruta de imagen no disponible')
+                          Image.file(
+                            File(producto['imagenURL']),
+                            width: double
+                                .infinity, // La imagen ocupa todo el ancho
+                            height: 200, // Altura fija para la imagen
+                            fit: BoxFit.cover, // Ajusta la imagen al contenedor
                           ),
-                        ),
                         ListTile(
                           title: Text(
-                            producto['nombre'] ?? 'Nombre no disponible',
+                            producto['nombreProducto'] ??
+                                'Nombre no disponible',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black,
+                              fontWeight: FontWeight.bold, // Título en negrita
+                              fontSize: 20, // Tamaño de fuente más grande
+                              color: Colors.black, // Texto en negro
                             ),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                producto['descripcion'] ??
-                                    'Descripción no disponible',
-                              ),
-                              Text(
-                                'Tipo de Unidad: ${producto['unidad'] ?? 'Unidad no disponible'}',
-                              ),
-                              Text(
-                                'Valor de Unidad: ${producto['valorUnidad'] ?? 'Valor no disponible'}',
-                              ),
-                              Text(
-                                'Dirección: ${producto['direccion'] ?? 'Dirección no disponible'}',
-                              ),
-                            ],
+                            children: [],
                           ),
                         ),
+                        // Agregar onTap para mostrar detalles del producto
                         InkWell(
                           onTap: () {
                             Navigator.push(
@@ -148,7 +131,7 @@ class _ProductosPageState extends State<ProductosPage> {
                           },
                           child: Container(
                             padding: EdgeInsets.all(12),
-                            color: Colors.blue,
+                            color: Colors.blue, // Cambia el color a tu gusto
                             child: Center(
                               child: Text(
                                 'Ver Detalles',
