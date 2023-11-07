@@ -22,6 +22,8 @@ class _ConversacionPageState extends State<ConversacionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUserID = widget.userId;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Chat with ${widget.nombreUsuario}"),
@@ -32,7 +34,7 @@ class _ConversacionPageState extends State<ConversacionPage> {
             child: StreamBuilder(
               stream: _firestore
                   .collection(
-                      'chats/${_generateConversationId(widget.userId, widget.otherUserId)}/messages')
+                      'chats/${_generateConversationId(currentUserID, widget.otherUserId)}/messages')
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -43,9 +45,26 @@ class _ConversacionPageState extends State<ConversacionPage> {
                 final messages = snapshot.data!.docs;
                 List<Widget> messageWidgets = [];
                 for (var message in messages) {
+                  final senderID = message['senderId'];
                   final messageText = message['text'];
-                  messageWidgets.add(ListTile(
-                    title: Text(messageText),
+
+                  // Determina si el mensaje es del usuario actual
+                  final isCurrentUser = senderID == currentUserID;
+
+                  messageWidgets.add(Align(
+                    alignment: isCurrentUser
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Container(
+                      padding: EdgeInsets.all(8.0),
+                      color: isCurrentUser ? Colors.blue : Colors.green,
+                      child: Text(
+                        messageText,
+                        style: TextStyle(
+                          color: isCurrentUser ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
                   ));
                 }
 
