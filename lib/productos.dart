@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:recicla/crear_anuncio.dart';
 import 'dart:io';
-
 import 'package:recicla/producto.dart';
 
 FirebaseFirestore db = FirebaseFirestore.instance;
@@ -57,6 +56,9 @@ class _ProductosPageState extends State<ProductosPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final columns = screenWidth ~/ 200; // Ajusta el ancho de cada cuadro
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Productos'),
@@ -84,13 +86,15 @@ class _ProductosPageState extends State<ProductosPage> {
             final productos = snapshot.data as List<Map<String, dynamic>>;
 
             if (productos.isNotEmpty) {
-              return ListView.builder(
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns, // 2 elementos por fila
+                ),
                 itemCount: productos.length,
                 itemBuilder: (context, index) {
                   final producto = productos[index];
                   return Card(
                     elevation: 4,
-                    margin: EdgeInsets.all(8),
                     child: Column(
                       children: [
                         if (producto['imagenURL'] != null &&
@@ -98,27 +102,21 @@ class _ProductosPageState extends State<ProductosPage> {
                                 'Ruta de imagen no disponible')
                           Image.file(
                             File(producto['imagenURL']),
-                            width: double
-                                .infinity, // La imagen ocupa todo el ancho
-                            height: 200, // Altura fija para la imagen
-                            fit: BoxFit.cover, // Ajusta la imagen al contenedor
+                            width: double.infinity,
+                            height: 200, // Tamaño fijo para la imagen cuadrada
+                            fit: BoxFit.cover,
                           ),
                         ListTile(
                           title: Text(
                             producto['nombreProducto'] ??
                                 'Nombre no disponible',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold, // Título en negrita
-                              fontSize: 20, // Tamaño de fuente más grande
-                              color: Colors.black, // Texto en negro
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.black,
                             ),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [],
-                          ),
                         ),
-                        // Agregar onTap para mostrar detalles del producto
                         InkWell(
                           onTap: () {
                             Navigator.push(
@@ -131,7 +129,7 @@ class _ProductosPageState extends State<ProductosPage> {
                           },
                           child: Container(
                             padding: EdgeInsets.all(12),
-                            color: Colors.blue, // Cambia el color a tu gusto
+                            color: Colors.blue,
                             child: Center(
                               child: Text(
                                 'Ver Detalles',
@@ -142,7 +140,7 @@ class _ProductosPageState extends State<ProductosPage> {
                               ),
                             ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   );
