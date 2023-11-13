@@ -4,11 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:recicla/chat.dart';
 import 'dart:io';
-
-import 'package:recicla/mapa2.dart';
-import 'package:recicla/chat.dart'; // Importa la página de chat
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CrearAnuncioPage extends StatefulWidget {
   final Position location;
@@ -40,30 +37,39 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
     final ubicacion =
         GeoPoint(widget.location.latitude, widget.location.longitude);
 
-    // Obtiene el usuario actual de Firebase Authentication
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null &&
         nombreProducto.isNotEmpty &&
         descripcion.isNotEmpty &&
-        isNumeric(valorUnidad)) {
-      final anuncioRef =
-          await FirebaseFirestore.instance.collection('producto').add({
+        isNumeric(valorUnidad) &&
+        selectedImage != null) {
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('images/$nombreProducto');
+      UploadTask uploadTask =
+          storageReference.putFile(File(selectedImage!.path));
+
+      TaskSnapshot taskSnapshot = await uploadTask;
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+
+      final anuncioData = {
         'nombreProducto': nombreProducto,
         'descripcion': descripcion,
         'valorUnidad': valorUnidad,
         'ubicacion': ubicacion,
         'tipoDeMaterial': tipoDeMaterial,
-        'imagenURL': selectedImage?.path,
-        'nombreUsuario':
-            user.displayName, // Utiliza el nombre del usuario actual
-        'userId': user.uid, // Agrega el ID de usuario
-      });
+        'imagenURL': imageUrl,
+        'nombreUsuario': user.displayName,
+        'userId': user.uid,
+      };
 
-      final anuncioId = anuncioRef.id; // Obtén el ID del anuncio creado
+      final anuncioRef = await FirebaseFirestore.instance
+          .collection('producto')
+          .add(anuncioData);
 
+      final anuncioId = anuncioRef.id;
       FirebaseFirestore.instance.collection('producto').doc(anuncioId).update({
-        'anuncioId': anuncioId, // Agrega el ID del anuncio a sí mismo
+        'anuncioId': anuncioId,
       });
 
       FirebaseFirestore.instance
@@ -71,22 +77,22 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
           .doc(anuncioId)
           .collection('conversations')
           .add({
-        'users': [user.uid], // Añade el usuario actual a la conversación
-        'anuncioId': anuncioId, // Agrega el ID del anuncio a la conversación
+        'users': [user.uid],
+        'anuncioId': anuncioId,
       });
 
       nombreProductoController.clear();
       descripcionController.clear();
       valorUnidad = '';
+      selectedImage = null;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             'Anuncio creado con éxito',
-            style: TextStyle(fontSize: 18), // Aumenta el tamaño del texto
+            style: TextStyle(fontSize: 18),
           ),
           backgroundColor: Colors.green,
-          behavior: SnackBarBehavior
-              .floating, // Coloca la alerta en la parte superior
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } else {
@@ -94,11 +100,10 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         SnackBar(
           content: Text(
             'Por favor, complete todos los campos correctamente',
-            style: TextStyle(fontSize: 18), // Aumenta el tamaño del texto
+            style: TextStyle(fontSize: 18),
           ),
           backgroundColor: Colors.red,
-          behavior: SnackBarBehavior
-              .floating, // Coloca la alerta en la parte superior
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
@@ -116,11 +121,10 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         SnackBar(
           content: Text(
             'Imagen subida correctamente',
-            style: TextStyle(fontSize: 18), // Aumenta el tamaño del texto
+            style: TextStyle(fontSize: 18),
           ),
           backgroundColor: Colors.green,
-          behavior: SnackBarBehavior
-              .floating, // Coloca la alerta en la parte superior
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
@@ -220,8 +224,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                 },
                 style: ButtonStyle(
                   minimumSize: MaterialStateProperty.all<Size>(
-                    Size(double.infinity,
-                        50), // Set the desired width and height
+                    Size(double.infinity, 50),
                   ),
                   backgroundColor: MaterialStateProperty.all<Color>(
                     Color.fromRGBO(0, 128, 0, 0.5),

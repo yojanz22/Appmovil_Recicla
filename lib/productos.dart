@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:recicla/crear_anuncio.dart';
-import 'dart:io';
-import 'package:recicla/producto.dart';
+import 'producto.dart'; // Import the DetalleProductoPage
 
 FirebaseFirestore db = FirebaseFirestore.instance;
 
@@ -16,17 +14,7 @@ Future<List<Map<String, dynamic>>> getProducto() async {
     Map<String, dynamic> productoData =
         documento.data() as Map<String, dynamic>;
 
-    if (productoData.containsKey('direccion')) {
-      productoData['direccion'] = productoData['direccion'];
-    } else {
-      productoData['direccion'] = 'Dirección no disponible';
-    }
-
-    if (productoData.containsKey('imagenURL')) {
-      productoData['imagenURL'] = productoData['imagenURL'];
-    } else {
-      productoData['imagenURL'] = 'Ruta de imagen no disponible';
-    }
+    // Add handling for missing fields here if needed
 
     productoList.add(productoData);
   });
@@ -110,8 +98,8 @@ class _ProductosPageState extends State<ProductosPage> {
                                 ),
                               );
                             },
-                            child: Image.file(
-                              File(producto['imagenURL']),
+                            child: Image.network(
+                              producto['imagenURL'],
                               width: double.infinity,
                               height: 200, // Tamaño fijo para la imagen
                               fit: BoxFit.cover,
