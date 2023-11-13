@@ -40,6 +40,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/zonas.json
     - assets/logo.jpeg
     - assets/login.jpeg
     - assets/fondo.jpeg

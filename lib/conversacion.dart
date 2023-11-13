@@ -33,8 +33,10 @@ class _ConversacionPageState extends State<ConversacionPage> {
           Expanded(
             child: StreamBuilder(
               stream: _firestore
-                  .collection(
-                      'chats/${_generateConversationId(currentUserID, widget.otherUserId)}/messages')
+                  .collection('chats')
+                  .doc(_generateConversationId(
+                      currentUserID, widget.otherUserId))
+                  .collection('messages')
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -51,21 +53,12 @@ class _ConversacionPageState extends State<ConversacionPage> {
                   // Determina si el mensaje es del usuario actual
                   final isCurrentUser = senderID == currentUserID;
 
-                  messageWidgets.add(Align(
-                    alignment: isCurrentUser
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Container(
-                      padding: EdgeInsets.all(8.0),
-                      color: isCurrentUser ? Colors.blue : Colors.green,
-                      child: Text(
-                        messageText,
-                        style: TextStyle(
-                          color: isCurrentUser ? Colors.white : Colors.black,
-                        ),
-                      ),
+                  messageWidgets.add(
+                    ChatBubble(
+                      messageText: messageText,
+                      isCurrentUser: isCurrentUser,
                     ),
-                  ));
+                  );
                 }
 
                 return ListView(
@@ -120,10 +113,39 @@ class _ConversacionPageState extends State<ConversacionPage> {
   }
 
   String _generateConversationId(String userId1, String userId2) {
-    if (userId1.compareTo(userId2) < 0) {
-      return '$userId1-$userId2';
-    } else {
-      return '$userId2-$userId1';
-    }
+    List<String> userIds = [userId1, userId2];
+    userIds.sort();
+    return "${userIds[0]}_${userIds[1]}";
+  }
+}
+
+class ChatBubble extends StatelessWidget {
+  final String messageText;
+  final bool isCurrentUser;
+
+  ChatBubble({
+    required this.messageText,
+    required this.isCurrentUser,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        padding: EdgeInsets.all(8.0),
+        margin: EdgeInsets.symmetric(vertical: 4.0),
+        decoration: BoxDecoration(
+          color: isCurrentUser ? Colors.blue : Colors.green,
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Text(
+          messageText,
+          style: TextStyle(
+            color: isCurrentUser ? Colors.white : Colors.black,
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'crear_anuncio.dart';
 import 'mapa2.dart';
+import 'mapa_zona.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -124,6 +125,28 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   textStyle: TextStyle(fontSize: 16),
                 ),
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                if (_locationObtained) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          MapaZonasPage(), // Usa la nueva página aquí
+                    ),
+                  );
+                }
+              },
+              icon: Icon(Icons.map, size: 60),
+              label: Text('Ir al Mapa de Zonas'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
+                ),
+                textStyle: TextStyle(fontSize: 16),
               ),
             ),
             SizedBox(height: 20),
