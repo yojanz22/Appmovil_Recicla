@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:recicla/main.dart';
 import 'package:recicla/registro.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -220,7 +221,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () async {
                         try {
@@ -243,8 +243,9 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFF40BF6D)),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromARGB(255, 255, 255, 255),
+                        ),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
@@ -255,9 +256,24 @@ class _LoginPageState extends State<LoginPage> {
                       child: Container(
                         width: double.infinity,
                         child: Center(
-                          child: Text(
-                            'Iniciar con Google',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Reemplaza 'assets/google_logo.png' con la ruta a tu recurso gráfico del logo de Google
+                              Image.asset('assets/google_logo.png',
+                                  width: 30, height: 30),
+                              SizedBox(
+                                  width:
+                                      10), // Espacio entre el logo y el texto
+                              Text(
+                                'Iniciar con Google',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color:
+                                      const Color.fromARGB(255, 253, 136, 136),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

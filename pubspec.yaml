@@ -20,6 +20,7 @@ dependencies:
   particle_field: ^1.0.0
   flutter_neumorphic: ^3.2.0
   google_sign_in: ^6.1.6
+  flutter_facebook_auth: '^3.5.0'
 
   #mapa
   google_maps_flutter: ^2.5.0  # Utiliza la versión adecuada
@@ -49,5 +50,6 @@ flutter:
     - assets/login.jpeg
     - assets/map1.jpeg
     - assets/carrito.jpeg
+    - assets/google_logo.png
 
   
