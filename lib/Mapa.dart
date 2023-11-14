@@ -13,12 +13,6 @@ class _MapScreenState extends State<MapScreen> {
   late Position _currentPosition;
   bool _locationObtained = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -48,6 +42,16 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation().then((_) {
+      setState(() {
+        _locationObtained = true;
+      });
+    });
+  }
+
   void _showLocationServiceAlert() {
     showDialog(
       context: context,
@@ -55,7 +59,8 @@ class _MapScreenState extends State<MapScreen> {
         return AlertDialog(
           title: Text('Servicio de ubicación deshabilitado'),
           content: Text(
-              'Por favor, active el servicio de ubicación en la configuración de su dispositivo.'),
+            'Por favor, active el servicio de ubicación en la configuración de su dispositivo.',
+          ),
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
@@ -76,7 +81,8 @@ class _MapScreenState extends State<MapScreen> {
         return AlertDialog(
           title: Text('Permisos de ubicación denegados'),
           content: Text(
-              'Por favor, habilite los permisos de ubicación en la configuración de su dispositivo.'),
+            'Por favor, habilite los permisos de ubicación en la configuración de su dispositivo.',
+          ),
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
@@ -94,53 +100,42 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''), // Título vacío
+        title: Text(''),
         backgroundColor: Colors.green[700],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 150, // Tamaño cuadrado
-              height: 150, // Tamaño cuadrado
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  if (_locationObtained) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            Mapa2Page(location: _currentPosition),
-                      ),
-                    );
-                  }
-                },
-                icon: Icon(Icons.map, size: 60), // Icono de mapa
-                label: Text('Ver productos en el mapa'),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0), // Cuadrado
-                  ),
-                  textStyle: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-            ElevatedButton.icon(
+      body: _locationObtained ? buildMainScreen() : buildLoadingScreen(),
+    );
+  }
+
+  Widget buildLoadingScreen() {
+    return Center(
+      child:
+          CircularProgressIndicator(), // Puedes personalizar este indicador de carga
+    );
+  }
+
+  Widget buildMainScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 150,
+            height: 150,
+            child: ElevatedButton.icon(
               onPressed: () {
                 if (_locationObtained) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          MapaZonasPage(), // Usa la nueva página aquí
+                          Mapa2Page(location: _currentPosition),
                     ),
                   );
                 }
               },
               icon: Icon(Icons.map, size: 60),
-              label: Text('Ir al Mapa de Zonas'),
+              label: Text('Ver productos en el mapa'),
               style: ElevatedButton.styleFrom(
                 primary: Colors.green,
                 shape: RoundedRectangleBorder(
@@ -149,35 +144,56 @@ class _MapScreenState extends State<MapScreen> {
                 textStyle: TextStyle(fontSize: 16),
               ),
             ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: 150, // Tamaño cuadrado
-              height: 150, // Tamaño cuadrado
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  if (_locationObtained) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            CrearAnuncioPage(location: _currentPosition),
-                      ),
-                    );
-                  }
-                },
-                icon: Icon(Icons.add, size: 60), // Icono de crear
-                label: Text('Crear una alerta'),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0), // Cuadrado
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              if (_locationObtained) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MapaZonasPage(),
                   ),
-                  textStyle: TextStyle(fontSize: 16),
+                );
+              }
+            },
+            icon: Icon(Icons.map, size: 60),
+            label: Text('Ir al Mapa de Zonas'),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+              textStyle: TextStyle(fontSize: 16),
+            ),
+          ),
+          SizedBox(height: 20),
+          SizedBox(
+            width: 150,
+            height: 150,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                if (_locationObtained) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CrearAnuncioPage(location: _currentPosition),
+                    ),
+                  );
+                }
+              },
+              icon: Icon(Icons.add, size: 60),
+              label: Text('Crear una alerta'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0),
                 ),
+                textStyle: TextStyle(fontSize: 16),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
