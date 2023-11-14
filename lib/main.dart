@@ -190,9 +190,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 );
               },
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/map1.jpeg'),
+              child: Column(
+                children: [
+                  Text(
+                    'IR A ZONA DE MAPAS',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('assets/map1.jpeg'),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 20),
@@ -205,9 +213,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 );
               },
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('assets/carrito.jpeg'),
+              child: Column(
+                children: [
+                  Text(
+                    'IR A VER PRODUCTOS',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('assets/carrito.jpeg'),
+                  ),
+                ],
               ),
             ),
           ],

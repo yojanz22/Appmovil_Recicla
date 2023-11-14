@@ -109,8 +109,17 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget buildLoadingScreen() {
     return Center(
-      child:
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Cargando mapa...',
+            style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(height: 20),
           CircularProgressIndicator(), // Puedes personalizar este indicador de carga
+        ],
+      ),
     );
   }
 
@@ -137,7 +146,7 @@ class _MapScreenState extends State<MapScreen> {
               icon: Icon(Icons.map, size: 60),
               label: Text('Ver productos en el mapa'),
               style: ElevatedButton.styleFrom(
-                primary: Colors.green,
+                primary: Color.fromARGB(255, 116, 23, 0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(0),
                 ),
@@ -145,6 +154,7 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ),
           ),
+          SizedBox(height: 20), // Espacio entre los botones
           ElevatedButton.icon(
             onPressed: () {
               if (_locationObtained) {
@@ -159,14 +169,14 @@ class _MapScreenState extends State<MapScreen> {
             icon: Icon(Icons.map, size: 60),
             label: Text('Ir al Mapa de Zonas'),
             style: ElevatedButton.styleFrom(
-              primary: Colors.green,
+              primary: Color.fromARGB(255, 50, 5, 156),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0),
               ),
               textStyle: TextStyle(fontSize: 16),
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 20), // Espacio entre los botones
           SizedBox(
             width: 150,
             height: 150,
