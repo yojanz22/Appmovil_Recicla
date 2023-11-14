@@ -70,8 +70,8 @@ class MyApp extends StatelessWidget {
       title: 'Mi App',
       home: MyHomePage(title: 'Menu principal', user: user),
       theme: ThemeData(
-        primaryColor: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        primaryColor: Color.fromARGB(255, 0, 0, 0),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
     );
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:recicla/chat.dart';
+import 'chat.dart'; // Asegúrate de importar la página de chat
 
 class DetalleProductoPage extends StatelessWidget {
   final Map<String, dynamic> producto;
@@ -57,6 +59,23 @@ class DetalleProductoPage extends StatelessWidget {
                 producto['valorUnidad'] ?? 'Valor no disponible',
                 style: TextStyle(fontSize: 18),
               ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                      nombreUsuario: producto['nombreUsuario'],
+                      userId:
+                          'ID_DEL_USUARIO_ACTUAL', // Coloca el ID del usuario actual
+                      otherUserId: producto['userId'],
+                    ),
+                  ),
+                );
+              },
+              child: Text('Hablar con la persona'),
             ),
           ],
         ),
