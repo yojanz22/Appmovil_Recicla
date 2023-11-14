@@ -44,9 +44,6 @@ class _ProductosPageState extends State<ProductosPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final columns = screenWidth ~/ 200; // Ajusta el ancho de cada cuadro
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Productos'),
@@ -72,6 +69,9 @@ class _ProductosPageState extends State<ProductosPage> {
           }
           if (snapshot.hasData) {
             final productos = snapshot.data as List<Map<String, dynamic>>;
+            final screenWidth = MediaQuery.of(context).size.width;
+            final columns =
+                screenWidth ~/ 200; // Ajusta el ancho de cada cuadro
 
             if (productos.isNotEmpty) {
               return GridView.builder(
@@ -86,8 +86,7 @@ class _ProductosPageState extends State<ProductosPage> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 8), // Margen superior para la imagen
+                          padding: EdgeInsets.only(top: 8),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -98,11 +97,13 @@ class _ProductosPageState extends State<ProductosPage> {
                                 ),
                               );
                             },
-                            child: Image.network(
-                              producto['imagenURL'],
-                              width: double.infinity,
-                              height: 200, // Tamaño fijo para la imagen
-                              fit: BoxFit.cover,
+                            child: AspectRatio(
+                              aspectRatio:
+                                  16 / 9, // Ajusta la relación de aspecto
+                              child: Image.network(
+                                producto['imagenURL'],
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
