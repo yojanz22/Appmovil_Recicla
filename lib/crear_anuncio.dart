@@ -23,6 +23,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
   String tipoDeMaterial = 'Plásticos';
   String valorUnidad = '';
   XFile? selectedImage;
+  bool isLoading = false;
 
   bool isNumeric(String s) {
     if (s == null) {
@@ -44,6 +45,10 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         descripcion.isNotEmpty &&
         isNumeric(valorUnidad) &&
         selectedImage != null) {
+      setState(() {
+        isLoading = true;
+      });
+
       Reference storageReference =
           FirebaseStorage.instance.ref().child('images/$nombreProducto');
       UploadTask uploadTask =
@@ -85,6 +90,11 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       descripcionController.clear();
       valorUnidad = '';
       selectedImage = null;
+
+      setState(() {
+        isLoading = false;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -136,105 +146,128 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
       appBar: AppBar(
         title: Text('Crear Anuncio'),
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text(
-                'Tipo de Material',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 16),
-              DropdownButton<String>(
-                value: tipoDeMaterial,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    tipoDeMaterial = newValue!;
-                  });
-                },
-                items: <String>[
-                  'Plásticos',
-                  'Papeles y Cartón',
-                  'Vidrio',
-                  'Lata',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Nombre del producto que quieres Reciclar',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              TextField(
-                controller: nombreProductoController,
-                decoration: InputDecoration(
-                  hintText: 'Ingrese el nombre del producto',
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Peso',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Ingrese el peso total',
-                ),
-                onChanged: (value) {
-                  valorUnidad = value;
-                },
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Descripción',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              TextField(
-                controller: descripcionController,
-                decoration: InputDecoration(
-                  hintText: 'Ingrese una descripción',
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _tomarFoto();
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(0, 128, 0, 0.5),
+      body: Stack(
+        children: [
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Tipo de Material',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  SizedBox(height: 16),
+                  DropdownButton<String>(
+                    value: tipoDeMaterial,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        tipoDeMaterial = newValue!;
+                      });
+                    },
+                    items: <String>[
+                      'Plásticos',
+                      'Papeles y Cartón',
+                      'Vidrio',
+                      'Lata',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Nombre del producto que quieres Reciclar',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    controller: nombreProductoController,
+                    decoration: InputDecoration(
+                      hintText: 'Ingrese el nombre del producto',
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Peso',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Ingrese el peso total',
+                    ),
+                    onChanged: (value) {
+                      valorUnidad = value;
+                    },
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Descripción',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextField(
+                    controller: descripcionController,
+                    decoration: InputDecoration(
+                      hintText: 'Ingrese una descripción',
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _tomarFoto();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromRGBO(0, 128, 0, 0.5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.camera_alt),
+                        Text('Tomar Foto'),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _crearAnuncio(context);
+                    },
+                    style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all<Size>(
+                        Size(double.infinity, 50),
+                      ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromRGBO(0, 128, 0, 0.5),
+                      ),
+                    ),
+                    child: Text('Crear Anuncio'),
+                  )
+                ],
+              ),
+            ),
+          ),
+          if (isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.camera_alt),
-                    Text('Tomar Foto'),
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Creando anuncio...',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  _crearAnuncio(context);
-                },
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all<Size>(
-                    Size(double.infinity, 50),
-                  ),
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                    Color.fromRGBO(0, 128, 0, 0.5),
-                  ),
-                ),
-                child: Text('Crear Anuncio'),
-              )
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }
