@@ -45,7 +45,6 @@ class _Mapa2PageState extends State<Mapa2Page> {
             BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
         break;
       // Agrega más casos según tus necesidades
-
       default:
         markerIcon = BitmapDescriptor.defaultMarker;
         break;
@@ -151,23 +150,111 @@ class _Mapa2PageState extends State<Mapa2Page> {
     });
   }
 
+  Widget _buildMaterialLegend() {
+    final List<String> tiposDeMaterial = [
+      'Plásticos',
+      'Papeles y Cartón',
+      'Vidrio',
+      'Lata'
+    ];
+
+    return Positioned(
+      top: 16.0,
+      left: 16.0,
+      child: Container(
+        width: 150.0,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Tipos de Materiales',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              SizedBox(height: 8),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                color: Colors.transparent,
+                child: ListView.builder(
+                  itemCount: tiposDeMaterial.length,
+                  itemBuilder: (context, index) {
+                    return _buildMaterialTile(tiposDeMaterial[index],
+                        getColorForMaterial(tiposDeMaterial[index]));
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color getColorForMaterial(String material) {
+    switch (material.toLowerCase()) {
+      case 'plásticos':
+        return Colors.red;
+      case 'papeles y cartón':
+        return Colors.green;
+      case 'vidrio':
+        return Colors.blue;
+      case 'lata':
+        return Colors.yellow;
+      // Agrega más casos según tus necesidades
+      default:
+        return Colors.grey; // Color predeterminado
+    }
+  }
+
+  Widget _buildMaterialTile(String material, Color color) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: color,
+            radius: 10,
+          ),
+          SizedBox(width: 8),
+          Text(
+            material,
+            style: TextStyle(
+                fontSize: 14.0, color: const Color.fromARGB(255, 0, 0, 0)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Mapa'),
-      ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(widget.location.latitude, widget.location.longitude),
-          zoom: 15,
-        ),
-        markers: _markers,
-        onMapCreated: (GoogleMapController controller) {
-          setState(() {
-            _controller = controller;
-          });
-        },
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target:
+                  LatLng(widget.location.latitude, widget.location.longitude),
+              zoom: 15,
+            ),
+            markers: _markers,
+            onMapCreated: (GoogleMapController controller) {
+              setState(() {
+                _controller = controller;
+              });
+            },
+          ),
+          _buildMaterialLegend(),
+        ],
       ),
     );
   }
