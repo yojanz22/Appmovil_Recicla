@@ -36,6 +36,6 @@
         <!-- Agrega la clave de API de Google Maps aquí -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyA-Y54tBVQMsEWpUCNFv_fQD7-4HNIhAnE"/>
+            android:value="AIzaSyBGeg6y91Vt1LR-HQBIH9vCpINtPZDyeS0"/>
     </application>
 </manifest>

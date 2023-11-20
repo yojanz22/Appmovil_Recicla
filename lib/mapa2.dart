@@ -23,11 +23,38 @@ class _Mapa2PageState extends State<Mapa2Page> {
     _loadCustomMarkersFromFirestore();
   }
 
-  Marker _buildCustomMarker(String nombre, double latitud, double longitud) {
+  Marker _buildCustomMarker(
+      String nombre, double latitud, double longitud, String tipoMaterial) {
+    BitmapDescriptor markerIcon;
+
+    switch (tipoMaterial.toLowerCase()) {
+      case 'plásticos':
+        markerIcon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+        break;
+      case 'papeles y cartón':
+        markerIcon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+        break;
+      case 'vidrio':
+        markerIcon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
+        break;
+      case 'lata':
+        markerIcon =
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
+        break;
+      // Agrega más casos según tus necesidades
+
+      default:
+        markerIcon = BitmapDescriptor.defaultMarker;
+        break;
+    }
+
     return Marker(
       markerId: MarkerId(nombre),
       position: LatLng(latitud, longitud),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      icon: markerIcon,
       infoWindow: InfoWindow(
         title: nombre,
       ),
@@ -46,11 +73,13 @@ class _Mapa2PageState extends State<Mapa2Page> {
         final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
         final GeoPoint ubicacion = data['ubicacion'] as GeoPoint;
         final String nombre = data['nombreProducto'] as String;
+        final String tipoMaterial = data['tipoDeMaterial'] as String;
 
         final customMarker = _buildCustomMarker(
           nombre,
           ubicacion.latitude,
           ubicacion.longitude,
+          tipoMaterial,
         );
 
         setState(() {
