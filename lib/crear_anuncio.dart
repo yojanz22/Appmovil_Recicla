@@ -1,11 +1,45 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+
+class FirebaseService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  Future<String?> subirImagen(File imageFile, String nombreImagen) async {
+    try {
+      TaskSnapshot snapshot = await _storage
+          .ref()
+          .child('tu_carpeta_en_storage/$nombreImagen')
+          .putFile(imageFile);
+      final String downloadURL = await snapshot.ref.getDownloadURL();
+      return downloadURL;
+    } catch (e) {
+      print('Error al subir la imagen a Firebase Storage: $e');
+      return null;
+    }
+  }
+
+  Future<void> crearAnuncioConImagen(Map<String, dynamic> anuncioData,
+      File imageFile, String nombreImagen) async {
+    try {
+      final String? imageUrl = await subirImagen(imageFile, nombreImagen);
+
+      if (imageUrl != null) {
+        anuncioData['imagenURL'] = imageUrl;
+        await _firestore.collection('producto').add(anuncioData);
+      } else {
+        print('No se pudo obtener la URL de la imagen.');
+      }
+    } catch (e) {
+      print('Error al crear el anuncio con imagen en Firestore: $e');
+    }
+  }
+}
 
 class CrearAnuncioPage extends StatefulWidget {
   final Position location;
@@ -17,6 +51,7 @@ class CrearAnuncioPage extends StatefulWidget {
 }
 
 class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
+  final FirebaseService _firebaseService = FirebaseService();
   final TextEditingController nombreProductoController =
       TextEditingController();
   final TextEditingController descripcionController = TextEditingController();
@@ -32,7 +67,7 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
     return double.tryParse(s) != null;
   }
 
-  void _crearAnuncio(BuildContext context) async {
+  Future<void> _crearAnuncio(BuildContext context) async {
     final nombreProducto = nombreProductoController.text;
     final descripcion = descripcionController.text;
     final ubicacion =
@@ -49,62 +84,53 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         isLoading = true;
       });
 
-      Reference storageReference =
-          FirebaseStorage.instance.ref().child('images/$nombreProducto');
-      UploadTask uploadTask =
-          storageReference.putFile(File(selectedImage!.path));
+      try {
+        await _firebaseService.crearAnuncioConImagen(
+          {
+            'nombreProducto': nombreProducto,
+            'descripcion': descripcion,
+            'valorUnidad': valorUnidad,
+            'ubicacion': ubicacion,
+            'tipoDeMaterial': tipoDeMaterial,
+            'nombreUsuario': user.displayName,
+            'userId': user.uid,
+          },
+          File(selectedImage!.path),
+          'images/$nombreProducto',
+        );
 
-      TaskSnapshot taskSnapshot = await uploadTask;
-      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+        nombreProductoController.clear();
+        descripcionController.clear();
+        valorUnidad = '';
+        selectedImage = null;
 
-      final anuncioData = {
-        'nombreProducto': nombreProducto,
-        'descripcion': descripcion,
-        'valorUnidad': valorUnidad,
-        'ubicacion': ubicacion,
-        'tipoDeMaterial': tipoDeMaterial,
-        'imagenURL': imageUrl,
-        'nombreUsuario': user.displayName,
-        'userId': user.uid,
-      };
-
-      final anuncioRef = await FirebaseFirestore.instance
-          .collection('producto')
-          .add(anuncioData);
-
-      final anuncioId = anuncioRef.id;
-      FirebaseFirestore.instance.collection('producto').doc(anuncioId).update({
-        'anuncioId': anuncioId,
-      });
-
-      FirebaseFirestore.instance
-          .collection('producto')
-          .doc(anuncioId)
-          .collection('conversations')
-          .add({
-        'users': [user.uid],
-        'anuncioId': anuncioId,
-      });
-
-      nombreProductoController.clear();
-      descripcionController.clear();
-      valorUnidad = '';
-      selectedImage = null;
-
-      setState(() {
-        isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Anuncio creado con éxito',
-            style: TextStyle(fontSize: 18),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Anuncio creado con éxito',
+              style: TextStyle(fontSize: 18),
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
           ),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+        );
+      } catch (e) {
+        print('Error al crear el anuncio: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error al crear el anuncio',
+              style: TextStyle(fontSize: 18),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -131,6 +157,27 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
         SnackBar(
           content: Text(
             'Imagen subida correctamente',
+            style: TextStyle(fontSize: 18),
+          ),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  Future<void> _seleccionarImagen() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        selectedImage = pickedFile;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Imagen seleccionada correctamente',
             style: TextStyle(fontSize: 18),
           ),
           backgroundColor: Colors.green,
@@ -227,6 +274,23 @@ class _CrearAnuncioPageState extends State<CrearAnuncioPage> {
                       children: [
                         Icon(Icons.camera_alt),
                         Text('Tomar Foto'),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _seleccionarImagen();
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromRGBO(0, 128, 0, 0.5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.image),
+                        Text('Seleccionar Imagen'),
                       ],
                     ),
                   ),

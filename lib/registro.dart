@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart'; // Importa la página principal
 import 'login.dart'; // Importa la página de inicio de sesión
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -29,6 +31,16 @@ class _RegisterPageState extends State<RegisterPage> {
           // Establece el nombre de usuario
           await userCredential.user
               ?.updateProfile(displayName: _nameController.text);
+
+          // Agrega el usuario a la colección 'registro' con el campo 'userID'
+          await _firestore
+              .collection('registro')
+              .doc(userCredential.user?.uid)
+              .set({
+            'correo': _emailController.text,
+            'nombreUsuario': _nameController.text,
+            'userID': userCredential.user?.uid,
+          });
 
           // Luego, puedes redirigir al usuario y guardar los datos adicionales en Firestore
           Navigator.pushReplacement(

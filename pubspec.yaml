@@ -21,6 +21,7 @@ dependencies:
   flutter_neumorphic: ^3.2.0
   google_sign_in: ^6.1.6
   flutter_facebook_auth: '^3.5.0'
+  flutter_image_compress: ^2.1.0
 
   #mapa
   google_maps_flutter: ^2.5.0  # Utiliza la versión adecuada
@@ -44,7 +45,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/zonas.json
+    - assets\zonas_predefinidas.json
     - assets/logo.jpeg
     - assets/login.jpeg
     - assets/fondo.jpeg
